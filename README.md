@@ -1,1 +1,1 @@
-# lrgasp-simulation
+# A tool for simulation RNA sequencing data
