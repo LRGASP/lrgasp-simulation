@@ -1,12 +1,11 @@
-# A pipeline for simulation RNA sequencing data
+# A pipeline for simulating RNA sequencing data
 
 
 ## About the pipeline
 
-This pipeline is designed for simulating an RNA sequencing datasets
-(PacBio, Oxford Nanopore, Illumina) based on provided reference data and 
-expression profile. Basically, it is a wrapper for several sequencing data 
-simulation tools: 
+This pipeline is designed for simulating RNA sequencing datasets that includes
+PacBio, Oxford Nanopore and Illumina reads based on the provided reference data and 
+expression profile. Basically, it is a wrapper for several simulation tools: 
 - [IsoSeqSim](https://github.com/yunhaowang/IsoSeqSim)
 - [Trans-NanoSim](https://github.com/bcgsc/NanoSim)
 - [RSEM simulator](http://deweylab.biostat.wisc.edu/rsem/README.html)
@@ -26,14 +25,16 @@ Available options are:
 
 ``` --fastq, -f``` long RNA reads in FASTQ format
 
-``` --output, -o``` output file with abundances (counts, TPM) in TSV format
+``` --output, -o``` output file with abundances (counts and TPM) in TSV format
 
 ``` --threads, -t``` number of threads for `minimap2`
 
 ``` --mandatory, -m``` file with a list of mandatory transcripts to be included,
-                       counts are assigned randomly;
+                       counts are assigned randomly, can be a TSV with transcript ids in the first column;
                        this option is used to provide artificial "novel" transcripts;
-                       make sure they are included in the reference    
+                       make sure they are included in the reference
+
+``` --seed, -m``` randomizer seed
 
 ## Simulating reads
 
@@ -41,7 +42,7 @@ To simulate reads run
 
 ``` simulate.py --reference_dir <PATH/TO/REFERENCES/> --reference_name <REFERENCE_NAME> --counts <COUNTS.tsv> -o <OUTPUT_DIR> ```
 
-For example, to run on test data launch:
+For example, to run on test data included in the repository launch
 
 ``` simulate.py --reference_dir data/ --reference_name test --counts data/test.counts.tsv -o test_simulation ```
 

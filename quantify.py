@@ -29,7 +29,10 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--threads", "-t", help="number of CPU threads for minimap [16]", default=16, type=int)
     parser.add_argument("--reference_transcripts", "-r", help="reference transcripts in FASTA format", type=str)
     parser.add_argument("--mandatory", "-m", help="file with a list of mandatory transcripts to be included, "
-                                                  "counts are assigned randomly", type=str)
+                                                  "counts are assigned randomly, "
+                                                  "can be a TSV with transcript ids in the first column", type=str)
+    parser.add_argument("--seed", "-s", help="randomizer seed [11]", default=11, type=int)
+
     args = parser.parse_args(args, namespace)
 
     if not check_params(args):
@@ -54,6 +57,7 @@ def set_logger(args, logger_instance):
 
 def run_pipeline(args):
     logger.info(" === LRGASP quantification pipeline started === ")
+    random.seed(args.seed)
     logger.info("Mapping reads with minimap2...")
     samfile_name = args.output + ".sam"
     result = subprocess.run(["minimap2", args.reference_transcripts, args.fastq, "-x", "map-ont",
@@ -72,12 +76,14 @@ def run_pipeline(args):
             transcript_counts[transcript_id] += 1
     os.remove(samfile_name)
 
+    # reading mandatory transcripts
     mandatory_transcripts = []
     if args.mandatory is not None:
         for l in open(args.mandatory):
+            l = l.strip()
             if not l or l.startswith("#"):
                 continue
-            mandatory_transcripts.append(l.strip())
+            mandatory_transcripts.append(l.split()[0])
 
     # adding "novel" transcript that must be in the simulated data
     for transcript_id in mandatory_transcripts:
