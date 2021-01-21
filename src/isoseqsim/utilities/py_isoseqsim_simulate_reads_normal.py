@@ -150,7 +150,8 @@ def generate_simulated_reads(inputs):
             if read_seq_muta_end != "":
                 lr_idx += 1
                 #simu_fa_name_line = ">PB." + str(iso_list.index(iso) + 1) + "." + str(lr_idx) + "_" + iso + "\n"
-                simu_fa_name_line = ">" + iso  + "_" + "NN" + str(iso_list.index(iso) + 1) + "." + str(lr_idx)+ "\n"
+                # Read name should not reveal the isoform :)
+                simu_fa_name_line = ">" + "PacBio_simulated_read_" + str(lr_idx)+ "\n"
                 for j in range(0, len(read_seq_muta_end), 80):
                     simu_fa_seq_line_list.append(read_seq_muta_end[j:j + 80])
                 simu_fa_line = simu_fa_name_line + "\n".join(simu_fa_seq_line_list)
@@ -184,9 +185,9 @@ def do_inputs():
                         help="Input: 3'end completeness probability file. Tab-spit file, first column is number of deleted nucleotide, second column is its probability. Total probability must be <= 1.0")
     parser.add_argument('-o', '--output', type=argparse.FileType('w'), required=True,
                         help="Output: fasta file, simulated reads")
-    parser.add_argument('-s', '--er_sub', type=float, default=0.05, help="Error rate: substitution")
-    parser.add_argument('-i', '--er_ins', type=float, default=0.025, help="Error rate: insertion")
-    parser.add_argument('-d', '--er_del', type=float, default=0.025, help="Error rate: deletion")
+    parser.add_argument('-s', '--er_sub', type=float, default=0.0042, help="Error rate: substitution")
+    parser.add_argument('-i', '--er_ins', type=float, default=0.0086, help="Error rate: insertion")
+    parser.add_argument('-d', '--er_del', type=float, default=0.0027, help="Error rate: deletion")
     parser.add_argument('-p', '--cpu', type=int, default=cpu_count(), help="Number of threads")
     parser.add_argument('--polya', default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
 

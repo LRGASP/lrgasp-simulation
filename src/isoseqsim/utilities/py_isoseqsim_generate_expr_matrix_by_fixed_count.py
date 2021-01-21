@@ -11,12 +11,12 @@ from collections import defaultdict
 def main(args):
     sys.stdout.write("Start analysis: " + time.strftime("%a,%d %b %Y %H:%M:%S") + "\n")
     sys.stdout.flush()
-    generate_expr_matrix(args.input, args.input_expr, args.output)
+    generate_expr_matrix(args.input, args.input_expr, args.output, args.read_number)
     sys.stdout.write("Finish analysis: " + time.strftime("%a,%d %b %Y %H:%M:%S") + "\n")
     sys.stdout.flush()
 
 
-def generate_expr_matrix(input_gpd_fl, input_txt_fl, output_expr_mtx):
+def generate_expr_matrix(input_gpd_fl, input_txt_fl, output_expr_mtx, million_reads=1):
     # parse txt
     dic_iso_expr = defaultdict(int)
     for line in input_txt_fl:
@@ -25,8 +25,7 @@ def generate_expr_matrix(input_gpd_fl, input_txt_fl, output_expr_mtx):
         vals = line.strip().split("\t")
         iso_id = vals[0]
         expr_v = vals[2]  # expr_v is TPM now
-        # we aim to generate 10 million reads per run
-        dic_iso_expr[iso_id] = int(round(10 * float(expr_v)))
+        dic_iso_expr[iso_id] = int(round(million_reads * float(expr_v)))
 
     for line in input_gpd_fl:
         iso_id = line.strip().split("\t")[1]
@@ -46,6 +45,8 @@ def do_inputs():
                         help="Input: expression txt file (first colunm is isoform ID, second colunmn is expression value)")
     parser.add_argument('-o', '--output', type=argparse.FileType('w'), required=True,
                         help="Output: gpd + read count file")
+    parser.add_argument("--read_number", "-n", help="number of reads to generate (in millions)", default=1.0, type=float)
+
     args = parser.parse_args()
     return args
 

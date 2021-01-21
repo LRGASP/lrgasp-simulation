@@ -32,7 +32,7 @@ def main():
             cmd3 = udir + "/py_isoseqsim_generate_expr_matrix.py -i " + tempdir + "/normal_annotation.gpd" + " -n " + args.nbn + " -p " + args.nbp + " -o " + args.transcript
             call(cmd3.split())
         else:
-            cmd3 = udir + "/py_isoseqsim_generate_expr_matrix_by_fixed_count.py -i " + tempdir + "/normal_annotation.gpd" + " -e " + args.expr + " -o " + args.transcript
+            cmd3 = udir + "/py_isoseqsim_generate_expr_matrix_by_fixed_count.py -i " + tempdir + "/normal_annotation.gpd" + " -e " + args.expr + " -o " + args.transcript + " --read_number " + str(args.read_number)
             call(cmd3.split())
 
         sys.stdout.write("# Step4: simulate Iso-Seq reads\n")
@@ -179,6 +179,7 @@ def do_inputs():
     group1.add_argument('--ei', type=str, default='0.011', help="Error rate: insertion. For more choices, see README")
     group1.add_argument('--ed', type=str, default='0.022', help="Error rate: deletion. For more choices, see README")
     group1.add_argument('--expr', type=str, default=None, help="Expression file")
+    parser.add_argument("--read_number", "-n", help="number of reads to generate (in millions)", default=1.0, type=float)
     group1.add_argument('--polya', default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
 
     group2 = parser.add_argument_group('Fusion mode options')

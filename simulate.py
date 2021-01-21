@@ -9,8 +9,13 @@ import sys
 from traceback import print_exc
 import logging
 import argparse
+import shutil
+
 
 from src.simulate_pacbio import *
+
+
+PACBIO_READ_COUNT = 1000
 
 
 logger = logging.getLogger('LRGASP')
@@ -21,7 +26,14 @@ def parse_args(args=None, namespace=None):
 
     parser.add_argument("--output", "-o", help="output folder, will be created automatically [default=lrgasp_simulation]",
                         type=str, default="lrgasp_simulation")
-    parser.add_argument("--counts", "-c", help="isoform counts in TSV format", type=str)
+    parser.add_argument("--reference_dir", "-r", help="path to folder with reference data", type=str)
+    parser.add_argument("--reference_name", "-s", help="a preset to be used for simulation; "
+                                                       "available option are ",
+                        choices=['mouse', 'human', 'test'],
+                        type=str)
+    parser.add_argument("--counts", "-c", help="transcript abundances in TSV format (output of quantify.py)", type=str)
+    parser.add_argument("--threads", "-t", help="number of CPU threads for simulators [16]", default=16, type=int)
+
     args = parser.parse_args(args, namespace)
 
     if os.path.exists(args.output):
@@ -29,6 +41,10 @@ def parse_args(args=None, namespace=None):
         print("WARNING! Output folder already exists, some files may be overwritten")
     else:
         os.makedirs(args.output)
+
+    args.tmp_dir = os.path.join(args.output, "tmp")
+    if not os.path.exists(args.output):
+        os.makedirs(args.tmp_dir)
 
     if not check_params(args):
         parser.print_usage()
@@ -63,9 +79,10 @@ def run_pipeline(args):
     # simulate short reads
 
     # simulate PacBio reads
-    simulate_pacbio(args.counts)
+    simulate_pacbio(args, PACBIO_READ_COUNT)
     # simulate ONT reads
 
+    shutil.rmtree(args.tmp_dir)
     logger.info(" === LRGASP simulation pipeline finished === ")
 
 
