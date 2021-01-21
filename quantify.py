@@ -5,11 +5,21 @@
 # ############################################################################
 
 import sys
+import os
 from traceback import print_exc
 import logging
 import argparse
+import subprocess
+import pysam
+import random
+from collections import defaultdict
 
 logger = logging.getLogger('LRGASP')
+
+# list of "novel" transcript that will be added to the annotation / transcriptome for testing purposes
+NOVEL_TRANSCRIPT_LIST = []
+MIN_NOVEL_COUNT = 10
+MAX_NOVEL_COUNT = 1000
 
 
 def parse_args(args=None, namespace=None):
@@ -42,7 +52,43 @@ def set_logger(args, logger_instance):
 
 def run_pipeline(args):
     logger.info(" === LRGASP quantification pipeline started === ")
+    logger.info("Mapping reads with minimap2...")
+    samfile_name = args.output + ".sam"
+    result = subprocess.run(["minimap2", args.reference_transcripts, args.fastq, "-x", "map-ont", "-t", "16", "-a",
+                               "--secondary=no", "-o", samfile_name])
+    if result.returncode != 0:
+        logger.error("minimap2 failed with code %d, make sure it is in you $PATH variable" % result.returncode)
+        exit(-1)
 
+    logger.info("Quantifying transcripts...")
+    transcript_counts = defaultdict(int)
+    with pysam.AlignmentFile(samfile_name, "r") as samfile_in:
+        for alignment in samfile_in:
+            transcript_id = alignment.reference_name
+            if alignment.reference_id == -1 or alignment.is_supplementary or alignment.is_secondary:
+                continue
+            transcript_counts[transcript_id] += 1
+    os.remove(samfile_name)
+
+    # adding "novel" transcript that must be in the simulated data
+    for novel_transcript_id in NOVEL_TRANSCRIPT_LIST:
+        # we have a few "novel" transcripts, so we don't really care if their abundance is uniformly distributed,
+        # which is not biologically sound
+        transcript_counts[novel_transcript_id] = random.randint(MIN_NOVEL_COUNT, MAX_NOVEL_COUNT)
+
+    count_sum = 0.0
+    for count in transcript_counts.values():
+        # we don't devide by gene length here as we assume each long read is a single transcripts (unlike in short reads)
+        count_sum += count
+    scaling_factor = count_sum / 1000000.0
+
+    outf = open(args.output, "w")
+    outf.write("#transcript_id\tcounts\ttpm\n")
+    for transcript_id in transcript_counts.keys():
+        outf.write("%s\t%d\t%0.6f\n" % (transcript_id, transcript_counts[transcript_id],
+                                        transcript_counts[transcript_id] / scaling_factor))
+    outf.close()
+    logger.info("Done. Output counts are stored in " + args.output)
     logger.info(" === LRGASP quantification pipeline finished === ")
 
 
