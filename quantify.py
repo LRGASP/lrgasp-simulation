@@ -17,7 +17,6 @@ from collections import defaultdict
 logger = logging.getLogger('LRGASP')
 
 # list of "novel" transcript that will be added to the annotation / transcriptome for testing purposes
-NOVEL_TRANSCRIPT_LIST = []
 MIN_NOVEL_COUNT = 10
 MAX_NOVEL_COUNT = 1000
 
@@ -29,6 +28,8 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--fastq", "-f", help="long reads in FASTQ format (PacBio/ONT)", type=str)
     parser.add_argument("--threads", "-t", help="number of CPU threads for minimap [16]", default=16, type=int)
     parser.add_argument("--reference_transcripts", "-r", help="reference transcripts in FASTA format", type=str)
+    parser.add_argument("--mandatory", "-m", help="file with a list of mandatory transcripts to be included, "
+                                                  "counts are assigned randomly", type=str)
     args = parser.parse_args(args, namespace)
 
     if not check_params(args):
@@ -71,11 +72,18 @@ def run_pipeline(args):
             transcript_counts[transcript_id] += 1
     os.remove(samfile_name)
 
+    mandatory_transcripts = []
+    if args.mandatory is not None:
+        for l in open(args.mandatory):
+            if not l or l.startswith("#"):
+                continue
+            mandatory_transcripts.append(l.strip())
+
     # adding "novel" transcript that must be in the simulated data
-    for novel_transcript_id in NOVEL_TRANSCRIPT_LIST:
+    for transcript_id in mandatory_transcripts:
         # we have a few "novel" transcripts, so we don't really care if their abundance is uniformly distributed,
         # which is not biologically sound
-        transcript_counts[novel_transcript_id] = random.randint(MIN_NOVEL_COUNT, MAX_NOVEL_COUNT)
+        transcript_counts[transcript_id] = random.randint(MIN_NOVEL_COUNT, MAX_NOVEL_COUNT)
 
     count_sum = 0.0
     for count in transcript_counts.values():

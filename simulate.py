@@ -27,7 +27,7 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--output", "-o", help="output folder, will be created automatically [default=lrgasp_simulation]",
                         type=str, default="lrgasp_simulation")
     parser.add_argument("--reference_dir", "-r", help="path to folder with reference data", type=str)
-    parser.add_argument("--reference_name", "-s", help="a preset to be used for simulation; "
+    parser.add_argument("--reference_name", "-n", help="a preset to be used for simulation; "
                                                        "available option are ",
                         choices=['mouse', 'human', 'test'],
                         type=str)
