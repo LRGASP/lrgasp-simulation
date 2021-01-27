@@ -3,7 +3,7 @@
 
 ## About the pipeline
 
-This pipeline is designed for simulating RNA sequencing datasets that includes
+This pipeline is designed for simulating RNA sequencing datasets that include
 PacBio, Oxford Nanopore and Illumina reads based on the provided reference data and 
 expression profile. Basically, it is a wrapper for several simulation tools: 
 - [IsoSeqSim](https://github.com/yunhaowang/IsoSeqSim)
