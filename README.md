@@ -31,7 +31,7 @@ To prepare reference data for simulation you will need to obtain reference genom
 reference transcripts in FASTA format, and gene annotation in GFF/GTF format.
 Furthermore, you will need to run [SQANTI3](https://github.com/ConesaLab/SQANTI3) on
 reference transcripts from any organism of your choice (e.g. rat).
-The isofroms can be then selected randomly or manually. If you want to
+The isoforms can be then selected randomly or manually. If you want to
 simulate reads based on reference transcripts only, simply omit `--sqanti_prefix` option.
 
 To prepare reference data run:
@@ -69,6 +69,8 @@ using real long-read sequencing data. To do so, add [`minimap2`](https://github.
 
 ``` quantify.py -r <trnascripts.fasta> --fastq <reads.fastq> -o counts.tsv```
 
+We recommend to use transcript sequences obtained at the previous step.
+
 Available options are:
 
 ``` --reference_transcripts, -r``` reference transcriptome in FASTA format
@@ -82,7 +84,8 @@ Available options are:
 ``` --mandatory, -m``` file with a list of mandatory transcripts to be included,
                        counts are assigned randomly, can be a TSV with transcript ids in the first column;
                        this option is used to provide artificial "novel" transcripts;
-                       make sure they are included in the reference
+                       make sure they are included in the reference;
+                       we recommend to use a list of novel isoforms generated at the previous step;
 
 ``` --seed, -m``` randomizer seed
 
@@ -100,12 +103,21 @@ Available options are:
 
 ``` --reference_dir, -r``` folder with reference data (must contain genome, transcriptome and annotation)
 
-``` --reference_name, -n``` prefix of reference files (files are `.genome.fasta`, `.transcripts.fasta` and `.annotation.gtf`) 
+``` --reference_name, -n``` prefix of reference files (files are `.genome.fasta`, `.transcripts.fasta` and `.annotation.gtf`);
+                            use the output of `prepare_reference_data.py`;
+
+```--counts, -c``` transcript abundances in TSV format (output of `quantify.py`)
 
 ``` --output, -o``` output folder
 
 ``` --threads, -t``` number of threads
 
+
+## Example 
+
+Example data (mouse chromosome 22) can downloaded from:
+
+section in progress
 
 ## Reference data
 
