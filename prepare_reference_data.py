@@ -210,7 +210,7 @@ def infer_novel_transcripts_to_fasta(args, novel_annotation):
     new_transcripts = []
     for chr_id in genomic_regions:
         chr_seq = genome_records[chr_id]
-        for transcript_tuple in genomic_regions[chr_seq]:
+        for transcript_tuple in genomic_regions[chr_id]:
             transcript_seq = extract_transcript_from_fasta(chr_seq, transcript_tuple[1], transcript_tuple[2])
             record = SeqRecord(Seq(transcript_seq), id=transcript_tuple[0])
             new_transcripts.append(record)
