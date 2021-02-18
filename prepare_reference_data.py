@@ -185,9 +185,8 @@ def parse_transcript(gtf_fragment):
     return chr_id, strand, sorted(exons)
 
 
-def extract_transcript_from_fasta(fasta_records, chr_id, strand, exons):
+def extract_transcript_from_fasta(chr_seq, strand, exons):
     transcript = ""
-    chr_seq = fasta_records[chr_id]
     for e in exons:
         transcript += str(chr_seq[e[0]-1:e[1]])
 
@@ -201,12 +200,19 @@ def extract_transcript_from_fasta(fasta_records, chr_id, strand, exons):
 def infer_novel_transcripts_to_fasta(args, novel_annotation):
     logger.info("Loading reference genome from " + args.reference_genome)
     genome_records = SeqIO.index(args.reference_genome, "fasta")
-    new_transcripts = []
+    # chrid -> [(t_id, strand, exons)]
+    genomic_regions = defaultdict(list)
     for gene_id in novel_annotation:
         for t in novel_annotation[gene_id]:
             chr_id, strand, exons = parse_transcript(t[1])
-            transcript_seq = extract_transcript_from_fasta(genome_records, chr_id, strand, exons)
-            record = SeqRecord(Seq(transcript_seq), id=t[0])
+            genomic_regions[chr_id].append((t[0], strand, exons))
+
+    new_transcripts = []
+    for chr_id in genomic_regions:
+        chr_seq = genome_records[chr_id]
+        for transcript_tuple in genomic_regions[chr_seq]:
+            transcript_seq = extract_transcript_from_fasta(chr_seq, transcript_tuple[1], transcript_tuple[2])
+            record = SeqRecord(Seq(transcript_seq), id=transcript_tuple[0])
             new_transcripts.append(record)
 
     for record in SeqIO.parse(args.reference_transcripts, "fasta"):
