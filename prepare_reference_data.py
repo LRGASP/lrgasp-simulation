@@ -83,7 +83,10 @@ def select_sqanti_isoforms(args):
     if args.isoform_list is not None:
         selected_isoform_set = set()
         for l in open(args.isoform_list):
-            isoform_id = l.strip().split()[0]
+            tokens = l.strip().split()
+            if l.startswith("#") or not tokens:
+                continue
+            isoform_id = tokens[0]
             if isoform_id in novel_isoforms:
                 selected_isoform_set.add(isoform_id)
             else:
@@ -188,7 +191,7 @@ def parse_transcript(gtf_fragment):
 def extract_transcript_from_fasta(chr_seq, strand, exons):
     transcript = ""
     for e in exons:
-        transcript += str(chr_seq[e[0]-1:e[1]])
+        transcript += str(chr_seq[e[0]-1:e[1]].seq)
 
     if strand == '-':
         transcript = str(Seq(transcript).reverse_complement()).upper()
@@ -207,12 +210,13 @@ def infer_novel_transcripts_to_fasta(args, novel_annotation):
             chr_id, strand, exons = parse_transcript(t[1])
             genomic_regions[chr_id].append((t[0], strand, exons))
 
+    logger.info("Extracting transcript sequences")
     new_transcripts = []
     for chr_id in genomic_regions:
         chr_seq = genome_records[chr_id]
         for transcript_tuple in genomic_regions[chr_id]:
             transcript_seq = extract_transcript_from_fasta(chr_seq, transcript_tuple[1], transcript_tuple[2])
-            record = SeqRecord(Seq(transcript_seq), id=transcript_tuple[0])
+            record = SeqRecord(Seq(transcript_seq), id=transcript_tuple[0], description="novel")
             new_transcripts.append(record)
 
     for record in SeqIO.parse(args.reference_transcripts, "fasta"):
@@ -220,6 +224,7 @@ def infer_novel_transcripts_to_fasta(args, novel_annotation):
         new_transcripts.append(record)
 
     SeqIO.write(new_transcripts, args.output + ".transcripts.fasta", 'fasta')
+    logger.info("Extended transcript sequences save to %s" % (args.output + ".transcripts.fasta")) 
 
 
 def set_logger(logger_instance):
@@ -239,7 +244,8 @@ def run_pipeline(args):
     gene_db = load_gene_db(args)
     infer_novel_transcripts_to_gtf(args, gene_db, novel_annotation)
     infer_novel_transcripts_to_fasta(args, novel_annotation)
-    shutil.copyfile(args.reference_genome, args.output + ".transcripts.fasta")
+    shutil.copyfile(args.reference_genome, args.output + ".genome.fasta")
+    logger.info("Reference genomes save to %s" % (args.output + ".genome.fasta")) 
     logger.info(" === LRGASP reference data preparation finished === ")
 
 
