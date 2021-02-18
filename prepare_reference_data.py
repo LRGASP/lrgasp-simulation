@@ -13,7 +13,6 @@ import shutil
 import random
 import gffutils
 from Bio import SeqIO
-from Bio import Seq
 import argparse
 from collections import defaultdict
 from Bio.Seq import Seq
@@ -28,14 +27,14 @@ def parse_args(args=None, namespace=None):
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument("--output", "-o", help="output prefix")
-    parser.add_argument("--reference_annotation", "-r", help="reference annotation (GTF/.db)", type=str)
+    parser.add_argument("--reference_annotation", "-a", help="reference annotation (GTF/.db)", type=str)
     parser.add_argument("--reference_transcripts", "-t", help="reference transcripts in FASTA format", type=str)
     parser.add_argument("--reference_genome", "-g", help="reference genome in FASTA format", type=str)
     parser.add_argument("--sqanti_prefix", "-q", help="path to SQANTI output "
                                                       "(_classification.txt and _corrected.gtf are needed)", type=str)
-    parser.add_argument("--n_random_isoforms", "-n", help="infer this number of random isoforms into the annotation",
+    parser.add_argument("--n_random_isoforms", "-n", help="insert this number of random novel isoforms into the annotation",
                         type=int)
-    parser.add_argument("--isoform_list", "-l", help="infer only isoforms from a given file", type=str)
+    parser.add_argument("--isoform_list", "-l", help="insert only novel isoforms from a given file", type=str)
     parser.add_argument("--seed", "-s", help="randomizer seed [11]", default=11, type=int)
 
     args = parser.parse_args(args, namespace)
@@ -49,7 +48,7 @@ def parse_args(args=None, namespace=None):
 def check_params(args):
     if args.n_random_isoforms is not None and args.isoform_list is not None:
         logger.warning("Both --n_random_isoforms and --isoform_list are provided, only ones from the list will be used")
-    return args.reference_annotation is not None and args.reference_transcripts is not None and args.sqanti_prefix is not None
+    return args.reference_annotation is not None and args.reference_transcripts is not None
 
 
 def replace_gene_id(l, new_gene_id):
@@ -157,7 +156,7 @@ def load_gene_db(args):
     return gffutils.FeatureDB(db_file, keep_order=True)
 
 
-def infer_novel_transcripts_to_gtf(args, genedb, novel_annotation):
+def insert_novel_transcripts_to_gtf(args, genedb, novel_annotation):
     extended_annotation_file = args.output + ".annotation.gtf"
     logger.info("Saving extended gene annotation (takes a while)...")
     with open(extended_annotation_file, "w") as f:
@@ -200,7 +199,7 @@ def extract_transcript_from_fasta(chr_seq, strand, exons):
     return transcript
 
 
-def infer_novel_transcripts_to_fasta(args, novel_annotation):
+def insert_novel_transcripts_to_fasta(args, novel_annotation):
     logger.info("Loading reference genome from " + args.reference_genome)
     genome_records = SeqIO.index(args.reference_genome, "fasta")
     # chrid -> [(t_id, strand, exons)]
@@ -240,10 +239,13 @@ def set_logger(logger_instance):
 def run_pipeline(args):
     logger.info(" === LRGASP reference data preparation started === ")
     random.seed(args.seed)
-    novel_annotation = select_sqanti_isoforms(args)
+    if args.sqanti_prefix is not None:
+        novel_annotation = select_sqanti_isoforms(args)
+    else:
+        novel_annotation = defaultdict(list)
     gene_db = load_gene_db(args)
-    infer_novel_transcripts_to_gtf(args, gene_db, novel_annotation)
-    infer_novel_transcripts_to_fasta(args, novel_annotation)
+    insert_novel_transcripts_to_gtf(args, gene_db, novel_annotation)
+    insert_novel_transcripts_to_fasta(args, novel_annotation)
     shutil.copyfile(args.reference_genome, args.output + ".genome.fasta")
     logger.info("Reference genomes save to %s" % (args.output + ".genome.fasta")) 
     logger.info(" === LRGASP reference data preparation finished === ")

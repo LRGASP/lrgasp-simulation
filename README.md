@@ -10,14 +10,64 @@ expression profile. Basically, it is a wrapper for several simulation tools:
 - [Trans-NanoSim](https://github.com/bcgsc/NanoSim)
 - [RSEM simulator](http://deweylab.biostat.wisc.edu/rsem/README.html)
 
+The pipeline consists of main 3 steps:
+- Preparing reference data, which includes insertting artificial novel isoforms.
+  These "novel" isoforms can be obtained by mapping any mammalian reference transcripts 
+  onto your genome (human or mouse) and processing them with [SQANTI3](https://github.com/ConesaLab/SQANTI3). 
+- Quantifying transcript abundance, which requires any real long-read RNA dataset.
+- Generating simulated reads and supplementary information, which will be available to the evaluators only.
 
-## Getting expression profile
+
+### Requirements
+
+- biopython
+- gffutils
+- pysam
+- minimap2
+
+## Preparing reference data
+
+To prepare reference data for simulation you will need to obtain reference genome and
+reference transcripts in FASTA format, and gene annotation in GFF/GTF format.
+Furthermore, you will need to run [SQANTI3](https://github.com/ConesaLab/SQANTI3) on
+reference transcripts from any organism of your choice (e.g. rat).
+The isofroms can be then selected randomly or manually. If you want to
+simulate reads based on reference transcripts only, simply omit `--sqanti_prefix` option.
+
+To prepare reference data run:
+
+``` prepare_reference_data.py -a <annotation.gtf> -t <transcripts.fa> -g <genome.fa> -q <SQANTI output prefix> --n_random_isoforms <int> -o <output_prefix>  ```
+
+Available options are:
+
+``` --output, -o ``` output prefix
+
+```--reference_annotation, -a``` reference annotation (GTF/.db)
+
+```--reference_transcripts, -t``` reference transcripts in FASTA format
+
+```--reference_genome, -g``` reference genome in FASTA format
+
+```--sqanti_prefix, -q``` prefix of SQANTI output (`_classification.txt` and `_corrected.gtf` are needed)
+
+```--n_random_isoforms, -n ``` insert this number of random novel artificial isoforms into the annotation
+
+```--isoform_list, -l``` insert only novel artificial isoforms from a given file
+
+```--seed, -s``` randomizer seed [11]
+
+If both `--n_random_isoforms` and `--isoform_list` are ignored, all isoforms reported by SQANTI will be inserted.
+
+If you want to skip inserting novel artificial isoforms and simulate reads based on reference transcripts only, 
+simply omit `--sqanti_prefix` option.
+
+## Quantifying transcript abundance
 
 To create an expression profile, you need to estimate transcript abundances 
 using real long-read sequencing data. To do so, add [`minimap2`](https://github.com/lh3/minimap2) to your
 `$PATH` variable and run
 
-``` quantify.py -r <REFERENCE_TRANSCRIPTS.fasta> --fastq <READS.fastq -o COUNTS.tsv```
+``` quantify.py -r <trnascripts.fasta> --fastq <reads.fastq> -o counts.tsv```
 
 Available options are:
 
@@ -40,7 +90,7 @@ Available options are:
 
 To simulate reads run
 
-``` simulate.py --reference_dir <PATH/TO/REFERENCES/> --reference_name <REFERENCE_NAME> --counts <COUNTS.tsv> -o <OUTPUT_DIR> ```
+``` simulate.py --reference_dir <path/to/references/> --reference_name <reference_prefix> --counts <counts.tsv> -o <output_dir> ```
 
 For example, to run on test data included in the repository launch
 
@@ -55,3 +105,14 @@ Available options are:
 ``` --output, -o``` output folder
 
 ``` --threads, -t``` number of threads
+
+
+## Reference data
+
+Human ([gencode v37](https://www.gencodegenes.org/human/)):
+- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.annotation.gtf.gz
+- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.transcripts.fa.gz
+
+Mouse ([gencode M26](https://www.gencodegenes.org/mouse/)):
+- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M26/gencode.vM26.annotation.gtf.gz
+- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M26/gencode.vM26.transcripts.fa.gz
