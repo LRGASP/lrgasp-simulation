@@ -100,7 +100,7 @@ def select_sqanti_isoforms(args):
 
     novel_isoform_file = args.output + ".novel_isoforms.tsv"
     novel_isoform_handler = open(novel_isoform_file, "w")
-    for t_id in sorted(novel_isoforms):
+    for t_id in sorted(selected_isoform_set):
         novel_isoform_handler.write(t_id + "\n")
     novel_isoform_handler.close()
 
@@ -158,7 +158,7 @@ def infer_novel_transcripts_to_gtf(args, genedb, novel_annotation):
     extended_annotation_file = args.output + ".annotation.gtf"
     logger.info("Saving extended gene annotation (takes a while)...")
     with open(extended_annotation_file, "w") as f:
-        for record in gffutils.FeatureDB(genedb, keep_order=True).all_features():
+        for record in genedb.all_features():
             f.write(str(record) + '\n')
             if record.featuretype == 'gene' and record.id in novel_annotation:
                 # add novel isoforms
@@ -177,6 +177,8 @@ def parse_transcript(gtf_fragment):
 
     exons = []
     for l in lines[1:]:
+        if not l:
+            continue
         tokens = l.split()
         exons.append((int(tokens[3]), int(tokens[4])))
 
@@ -190,13 +192,14 @@ def extract_transcript_from_fasta(fasta_records, chr_id, strand, exons):
         transcript += str(chr_seq[e[0]-1:e[1]])
 
     if strand == '-':
-        transcript = str(Seq.Seq(transcript).reverse_complement()).upper()
+        transcript = str(Seq(transcript).reverse_complement()).upper()
 
     transcript += "A" * POLYA_LEN
     return transcript
 
 
 def infer_novel_transcripts_to_fasta(args, novel_annotation):
+    logger.info("Loading reference genome from " + args.reference_genome)
     genome_records = SeqIO.index(args.reference_genome, "fasta")
     new_transcripts = []
     for gene_id in novel_annotation:
