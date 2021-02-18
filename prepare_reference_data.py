@@ -98,6 +98,12 @@ def select_sqanti_isoforms(args):
         selected_isoform_set = set(novel_isoforms.keys())
     logger.info("Total isoform selected: %d" % len(selected_isoform_set))
 
+    novel_isoform_file = args.output + ".novel_isoforms.tsv"
+    novel_isoform_handler = open(novel_isoform_file, "w")
+    for t_id in sorted(novel_isoforms):
+        novel_isoform_handler.write(t_id + "\n")
+    novel_isoform_handler.close()
+
     # gene_id -> [(isoform_id, GTF lines)]
     novel_annotation = defaultdict(list)
     logger.info("Loading SQANTI annotation file")
@@ -145,7 +151,7 @@ def load_gene_db(args):
     logger.info("Provide this database next time to avoid excessive conversion")
 
     logger.info("Loading annotation from database")
-    return gffutils.FeatureDB(args.reference_annotation, keep_order=True)
+    return gffutils.FeatureDB(db_file, keep_order=True)
 
 
 def infer_novel_transcripts_to_gtf(args, genedb, novel_annotation):
@@ -231,6 +237,9 @@ def run_pipeline(args):
 def main(args):
     args = parse_args(args)
     set_logger(logger)
+    out_dir = os.path.dirname(args.output)
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
     run_pipeline(args)
 
 
