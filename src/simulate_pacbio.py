@@ -21,7 +21,7 @@ def simulate_pacbio(args, read_count=1000):
     src_path = os.path.dirname(os.path.realpath(__file__))
     isoseqsim = os.path.join(src_path, "isoseqsim/bin/isoseqsim.py")
     param_dir = os.path.join(src_path, "isoseqsim/utilities/")
-    ref_prefix = os.path.join(args.reference_dir, args.reference_name)
+    ref_prefix = args.reference_prefix
     result = subprocess.run([isoseqsim, "--cpu", str(args.threads), "--tempdir", args.tmp_dir,
                              "--annotation", ref_prefix + ".annotation.gtf",
                              "--genome", ref_prefix + ".genome.fasta", "--expr", args.counts,

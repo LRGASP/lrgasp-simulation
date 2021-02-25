@@ -28,11 +28,7 @@ def parse_args(args=None, namespace=None):
 
     parser.add_argument("--output", "-o", help="output folder, will be created automatically [default=lrgasp_simulation]",
                         type=str, default="lrgasp_simulation")
-    parser.add_argument("--reference_dir", "-r", help="path to folder with reference data", type=str)
-    parser.add_argument("--reference_name", "-n", help="a preset to be used for simulation; "
-                                                       "available option are ",
-                        choices=['mouse', 'human', 'test'],
-                        type=str)
+    parser.add_argument("--reference_prefix", "-r", help="a path to reference files",  type=str)
     parser.add_argument("--counts", "-c", help="transcript abundances in TSV format (output of quantify.py)", type=str)
     parser.add_argument("--threads", "-t", help="number of CPU threads for simulators [16]", default=16, type=int)
     parser.add_argument("--seed", "-s", help="randomizer seed [11]", default=11, type=int)

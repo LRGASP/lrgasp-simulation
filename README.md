@@ -101,10 +101,8 @@ For example, to run on test data included in the repository launch
 
 Available options are:
 
-``` --reference_dir, -r``` folder with reference data (must contain genome, transcriptome and annotation)
-
-``` --reference_name, -n``` prefix of reference files (files are `.genome.fasta`, `.transcripts.fasta` and `.annotation.gtf`);
-                            use the output of `prepare_reference_data.py`;
+``` --reference_prefix, -r``` prefix for reference files (files are `.genome.fasta`, `.transcripts.fasta` and `.annotation.gtf`);
+                              use the output of `prepare_reference_data.py`;
 
 ```--counts, -c``` transcript abundances in TSV format (output of `quantify.py`)
 
