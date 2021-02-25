@@ -27,10 +27,10 @@ def simulate_pacbio(args, read_count=1000):
                              "--genome", ref_prefix + ".genome.fasta", "--expr", args.counts,
                              "--c5", os.path.join(param_dir, "5_end_completeness.PacBio-Sequel.tab"),
                              "--c3", os.path.join(param_dir, "3_end_completeness.PacBio-Sequel.tab"),
-                             "--es", "0.00427494615062", "--ei", "0.00864794651776", "--ed", "0.00272382484128",
+                             "--es", "0.0005", "--ei", "0.002", "--ed", "0.0006",
                              "--read_number", str(read_count / 1000000.0), "--polya",
                              "--transcript", os.path.join(args.output, "PacBio.simulated.tsv"),
-                             "-o", os.path.join(args.output, "PacBio.simulated.fasta")])
+                             "-o", os.path.join(args.output, "PacBio.simulated")])
 
     if result.returncode != 0:
         logger.error("IsoSeqSim failed, contact developers for support.")

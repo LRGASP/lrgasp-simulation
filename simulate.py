@@ -10,11 +10,13 @@ from traceback import print_exc
 import logging
 import argparse
 import shutil
+import random
+import numpy as np
 
 
 from src.simulate_pacbio import *
 
-
+# TODO insert correct numbers
 PACBIO_READ_COUNT = 1000
 
 
@@ -33,6 +35,7 @@ def parse_args(args=None, namespace=None):
                         type=str)
     parser.add_argument("--counts", "-c", help="transcript abundances in TSV format (output of quantify.py)", type=str)
     parser.add_argument("--threads", "-t", help="number of CPU threads for simulators [16]", default=16, type=int)
+    parser.add_argument("--seed", "-s", help="randomizer seed [11]", default=11, type=int)
 
     args = parser.parse_args(args, namespace)
 
@@ -76,6 +79,8 @@ def set_logger(args, logger_instance):
 
 def run_pipeline(args):
     logger.info(" === LRGASP simulation pipeline started === ")
+    random.seed(args.seed)
+    np.random.seed(args.seed)
     # simulate short reads
 
     # simulate PacBio reads

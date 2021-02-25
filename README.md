@@ -115,9 +115,11 @@ Available options are:
 
 ## Example 
 
-Example data (mouse chromosome 22) can downloaded from:
+Example data (Human chromosome 22) can be downloaded from:
 
 section in progress
+
+## Output
 
 ## Reference data
 

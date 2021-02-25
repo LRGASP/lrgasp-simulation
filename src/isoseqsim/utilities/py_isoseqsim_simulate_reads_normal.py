@@ -8,7 +8,8 @@ import time
 import argparse
 import numpy as np
 from multiprocessing import cpu_count, Pool
-
+from collections import defaultdict
+from Bio import Seq
 
 def main(args):
     sys.stdout.write("Start analysis: " + time.strftime("%a,%d %b %Y %H:%M:%S") + "\n")
@@ -16,17 +17,34 @@ def main(args):
     error_type, error_prob = extract_error_rate(args.er_sub, args.er_ins, args.er_del)
     bp5_list, pro5_list, bp3_list, pro3_list = extract_read_completeness(args.cpt_5end, args.cpt_3end)
     input_gpd_fl = args.input_gpd
-    output_gpd_fl = args.output
+    output_fasta = open(args.output + ".fasta", "w")
+    output_read_info = open(args.output + ".read_to_isoform.tsv", "w")
     dic_iso_seq, iso_list = parse_transcriptome_fa(args.input_fa)
     p = Pool(processes=args.cpu)
     csize = 100
     results = p.imap(func=generate_simulated_reads,
                      iterable=generate_tx(input_gpd_fl, dic_iso_seq, iso_list, error_type, error_prob, bp5_list,
                                           pro5_list, bp3_list, pro3_list, args.polya), chunksize=csize)
+    read_counter = 0
+    isoform_counts = defaultdict(int)
     for res in results:
         if not res: continue
-        output_gpd_fl.write(res + "\n")
-    output_gpd_fl.close()
+        for read in res:
+            read_seq = read[0]
+            isoform_id = read[1]
+            read_id = "PacBio_simulated_read_" + str(read_counter)
+            read_counter += 1
+            output_fasta.write(">" + read_id + "\n" + read_seq + "\n")
+            output_read_info.write(read_id + "\t" + isoform_id + "\n")
+            isoform_counts[isoform_id] += 1
+
+    output_counts = open(args.output + ".isoform_counts.tsv", "w")
+    for isoform_id in isoform_counts:
+        output_counts.write(isoform_id + "\t" + str(isoform_counts[isoform_id]) + "\n")
+
+    output_counts.close()
+    output_fasta.close()
+    output_read_info.close()
 
     sys.stdout.write("Finish analysis: " + time.strftime("%a,%d %b %Y %H:%M:%S") + "\n")
     sys.stdout.flush()
@@ -138,7 +156,7 @@ def generate_simulated_reads(inputs):
     lr_idx = 0
     if int(read_count) != 0:
         read_seq = dic_iso_seq[iso]
-        simu_fa_all_lines_list = []
+        generated_reads = []
         for i in range(0, int(read_count)):
             simu_fa_seq_line_list = []
             if append_polya:
@@ -150,15 +168,16 @@ def generate_simulated_reads(inputs):
             if read_seq_muta_end != "":
                 lr_idx += 1
                 #simu_fa_name_line = ">PB." + str(iso_list.index(iso) + 1) + "." + str(lr_idx) + "_" + iso + "\n"
-                # Read name should not reveal the isoform :)
-                simu_fa_name_line = ">" + "PacBio_simulated_read_" + str(lr_idx)+ "\n"
+                revese = np.random.randint(2)
+                if revese:
+                    read_seq_muta_end = str(Seq.Seq(read_seq_muta_end).reverse_complement()).upper()
                 for j in range(0, len(read_seq_muta_end), 80):
                     simu_fa_seq_line_list.append(read_seq_muta_end[j:j + 80])
-                simu_fa_line = simu_fa_name_line + "\n".join(simu_fa_seq_line_list)
-                simu_fa_all_lines_list.append(simu_fa_line)
-        if simu_fa_all_lines_list != []:
-            simu_fa_all_lines = "\n".join(simu_fa_all_lines_list)
-            return simu_fa_all_lines
+                simu_fa_line = "\n".join(simu_fa_seq_line_list)
+                generated_reads.append((simu_fa_line, iso))
+        if generated_reads != []:
+            #simu_fa_all_lines = "\n".join(simu_fa_all_lines_list)
+            return generated_reads
         else:
             return None
     else:
@@ -183,8 +202,8 @@ def do_inputs():
                         help="Input: 5'end completeness probability file. Tab-spit file, first column is number of deleted nucleotide, second column is its probability. Total probability must be <= 1.0")
     parser.add_argument('-3', '--cpt_3end', type=argparse.FileType('r'), required=True,
                         help="Input: 3'end completeness probability file. Tab-spit file, first column is number of deleted nucleotide, second column is its probability. Total probability must be <= 1.0")
-    parser.add_argument('-o', '--output', type=argparse.FileType('w'), required=True,
-                        help="Output: fasta file, simulated reads")
+    parser.add_argument('-o', '--output', type=str, required=True,
+                        help="Output prefix")
     parser.add_argument('-s', '--er_sub', type=float, default=0.0042, help="Error rate: substitution")
     parser.add_argument('-i', '--er_ins', type=float, default=0.0086, help="Error rate: insertion")
     parser.add_argument('-d', '--er_del', type=float, default=0.0027, help="Error rate: deletion")

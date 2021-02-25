@@ -26,12 +26,14 @@ def main():
         sys.stdout.flush()
         cmd2 = udir + "/py_isoseqsim_gpd2fa_normal.py -a " + args.genome + " -g " + tempdir + "/normal_annotation.gpd" + " -o " + tempdir + "/normal_transcriptome.fa"
         call(cmd2.split())
-        sys.stdout.write("# Step3: generate expression matrix based on Negative Binomial distribution\n")
-        sys.stdout.flush()
         if args.expr is None:
+            sys.stdout.write("# Step3: generate expression matrix based on Negative Binomial distribution\n")
+            sys.stdout.flush()
             cmd3 = udir + "/py_isoseqsim_generate_expr_matrix.py -i " + tempdir + "/normal_annotation.gpd" + " -n " + args.nbn + " -p " + args.nbp + " -o " + args.transcript
             call(cmd3.split())
         else:
+            sys.stdout.write("# Step3: generate expression matrix based on input abundance file\n")
+            sys.stdout.flush()
             cmd3 = udir + "/py_isoseqsim_generate_expr_matrix_by_fixed_count.py -i " + tempdir + "/normal_annotation.gpd" + " -e " + args.expr + " -o " + args.transcript + " --read_number " + str(args.read_number)
             call(cmd3.split())
 
