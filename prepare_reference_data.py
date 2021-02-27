@@ -255,7 +255,7 @@ def main(args):
     args = parse_args(args)
     set_logger(logger)
     out_dir = os.path.dirname(args.output)
-    if not os.path.exists(out_dir):
+    if out_dir and not os.path.exists(out_dir):
         os.makedirs(out_dir)
     run_pipeline(args)
 
