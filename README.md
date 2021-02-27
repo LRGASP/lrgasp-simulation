@@ -115,9 +115,28 @@ Available options are:
 
 Example data (Human chromosome 22) can be downloaded from:
 
-section in progress
+Step 1: prepare reference data with 50 artificial novel isoforms
+
+```prepare_reference_data.py --reference_annotation human_chr22/gencode.v32.annotation.chr22.gtf --reference_transcripts human_chr22/gencode.v32.transcripts.chr22.fa --reference_genome human_chr22/GRCh38.chr22.fa --sqanti_prefix human_chr22/rat_human_chr22 --n_random_isoforms 50 --output reference_data_chr22/human.chr22 ```
+
+Step 2: generate expression profile based on real PacBio CCS data
+
+```quantify.py --fastq human_chr22/Human.PacBio.ENCFF.chr22.fq -t 16 --reference_transcripts reference_data_chr22/human.chr22.transcripts.fasta --mandatory reference_data_chr22/human.chr22.novel_isoforms.tsv --output reference_data_chr22/human.chr22.counts.tsv```
+
+Step 3: simulate data
+
+```simulate.py --reference_prefix reference_data_chr22/human.chr22 --counts reference_data_chr22/human.chr22.counts.tsv -t 16 --output chr22_simulated```
+
+The output files will be stored in `chr22_simulated` folder. Output description is provided in the following section.
 
 ## Output
+
+- `simulator.log` log file
+- `PacBio.simulated.fasta` simulated PacBio CCS reads
+- `PacBio.simulated.isoform_counts.tsv` de facto counts for every isoform
+- `PacBio.simulated.read_to_isoform.tsv` read ID to isofrom ID table
+- `PacBio.simulated.tsv` internal IsoSeqSim file (detailed information on simulated isoforms)
+
 
 ## Reference data
 
