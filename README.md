@@ -113,15 +113,17 @@ Available options are:
 
 ## Example 
 
-Example data (Human chromosome 22) can be downloaded from:
+Example data (Human chromosome 22) can be found in `data/human_chr22.tar.gz`:
+
+Unpack the data by running `tar -xzf human_chr22.tar.gz` in `data` folder and launch the following commands.
 
 Step 1: prepare reference data with 50 artificial novel isoforms
 
-```prepare_reference_data.py --reference_annotation human_chr22/gencode.v32.annotation.chr22.gtf --reference_transcripts human_chr22/gencode.v32.transcripts.chr22.fa --reference_genome human_chr22/GRCh38.chr22.fa --sqanti_prefix human_chr22/rat_human_chr22 --n_random_isoforms 50 --output reference_data_chr22/human.chr22 ```
+```prepare_reference_data.py --reference_annotation data/human_chr22/gencode.v32.annotation.chr22.gtf --reference_transcripts data/human_chr22/gencode.v32.transcripts.chr22.fa --reference_genome data/human_chr22/GRCh38.chr22.fa --sqanti_prefix data/human_chr22/rat_human_chr22 --n_random_isoforms 50 --output reference_data_chr22/human.chr22 ```
 
 Step 2: generate expression profile based on real PacBio CCS data
 
-```quantify.py --fastq human_chr22/Human.PacBio.ENCFF.chr22.fq -t 16 --reference_transcripts reference_data_chr22/human.chr22.transcripts.fasta --mandatory reference_data_chr22/human.chr22.novel_isoforms.tsv --output reference_data_chr22/human.chr22.counts.tsv```
+```quantify.py --fastq data/human_chr22/Human.PacBio.ENCFF.chr22.fq -t 16 --reference_transcripts reference_data_chr22/human.chr22.transcripts.fasta --mandatory reference_data_chr22/human.chr22.novel_isoforms.tsv --output reference_data_chr22/human.chr22.counts.tsv```
 
 Step 3: simulate data
 
