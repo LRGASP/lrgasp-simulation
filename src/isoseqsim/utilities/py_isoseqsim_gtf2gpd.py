@@ -53,12 +53,11 @@ def output_gpd(dic_iso_info, gpd_file):  # print each isoform by gpd format
             exon_end = str(exon_end_list[-1])
             cds_start = "."
             cds_end = "."
-            print("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+            gpd_file.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
                 dic_iso_info[chr_strand][iso]["gene_id"], iso, chr_strand.split("&")[0], chr_strand.split("&")[1],
                 exon_start, exon_end, cds_start, cds_end, exon_number,
                 (",".join(str(x) for x in exon_start_list) + ","),
-                (",".join(str(x) for x in exon_end_list) + ",")),
-				  file=gpd_file)
+                (",".join(str(x) for x in exon_end_list) + ",")))
     gpd_file.close()
 
 

@@ -56,8 +56,8 @@ def convert_gpd_to_fasta(input_fa_fl, input_gpd_fl, output_fa_fl):
             seq = seq_com[::-1]
         else:
             seq = "".join(up_seq_list)
-        print(">" + iso, file=output_fa_fl)
-        print(seq, file=output_fa_fl)
+        output_fa_fl.write(">" + iso + "\n")
+        output_fa_fl.write(seq + "\n")
 
     input_fa_fl.close()
     input_gpd_fl.close()
