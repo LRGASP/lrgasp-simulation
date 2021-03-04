@@ -14,13 +14,15 @@ logger = logging.getLogger('LRGASP')
 def prepare_rsem_counts(ref_transcripts, counts_file, out_file):
     tpm_dict = defaultdict(float)
     for l in open(counts_file):
+        if l.startswith("#") or not l.strip():
+            continue
         t = l.strip().split()
-        tpm_dict[t[0]] = float(t[1])
+        tpm_dict[t[0]] = float(t[2])
 
     outf = open(out_file, "w")
     outf.write("transcript_id\tgene_id\tlength\teffective_length\texpected_count\tTPM\tFPKM\tIsoPct\n")
-    for transcirpt in SeqIO.index(ref_transcripts, "fasta"):
-        seq_len = len(transcirpt)
+    for transcirpt in SeqIO.parse(ref_transcripts, "fasta"):
+        seq_len = len(transcirpt.seq)
         eff_len = float(max(1, seq_len - 220))
         tpm = tpm_dict[transcirpt.id]
         iso_pct = 100.0 if tpm > 0.0 else 0.0
@@ -36,6 +38,7 @@ def simulate_illumina(args, read_count=100000):
 
     if not os.path.exists(os.path.join(rsem_dir, "rsem-simulate-reads")):
         # compile rsem
+        logger.info("Compiling RSEM...")
         current_wd = os.getcwd()
         os.chdir(rsem_dir)
         result = subprocess.run(["make"])
@@ -45,9 +48,10 @@ def simulate_illumina(args, read_count=100000):
             return
     assert os.path.exists(os.path.join(rsem_dir, "rsem-simulate-reads"))
 
+    logger.info("Preparing reference data...")
     ref_prefix = args.reference_prefix
     rsem_data_dir = os.path.join(args.output, "rsem_data")
-    os.makedirs(rsem_data_dir)
+    os.makedirs(rsem_data_dir, exist_ok=True)
     prepare_reference = os.path.join(rsem_dir, "rsem-prepare-reference")
     rsem_ref_path = os.path.join(rsem_data_dir, "RSEM.reference")
     ref_transcripts = ref_prefix + ".transcripts.fasta"
@@ -55,10 +59,14 @@ def simulate_illumina(args, read_count=100000):
     if result.returncode != 0:
         logger.error("RSEM reference data preparation failed, contact developers for support.")
         return
+    logger.info("Done")
 
+    logger.info("Preparing counts...")
     rsem_count_file = os.path.join(rsem_data_dir, "RSEM.counts.tsv")
     prepare_rsem_counts(ref_transcripts, args.counts, rsem_count_file)
+    logger.info("Done")
 
+    logger.info("Simulating Illumina reads with RSEM...")
     rsem_simulate = os.path.join(rsem_dir, "rsem-simulate-reads")
     model_file = os.path.join(rsem_dir, "models/Illumina150.RNA.model")
     result = subprocess.run([rsem_simulate, rsem_ref_path, model_file, rsem_count_file, "0.0", str(read_count),
@@ -66,5 +74,4 @@ def simulate_illumina(args, read_count=100000):
     if result.returncode != 0:
         logger.error("RSEM simulator failed, contact developers for support.")
         return
-
-    logger.info("Done.")
+    logger.info("Done")

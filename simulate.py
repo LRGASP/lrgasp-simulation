@@ -15,6 +15,7 @@ import numpy as np
 
 
 from src.simulate_pacbio import *
+from src.simulate_illumina import *
 
 # TODO insert correct numbers
 PACBIO_READ_COUNT = 1000
@@ -82,7 +83,7 @@ def run_pipeline(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     # simulate short reads
-
+    simulate_illumina(args)
     # simulate PacBio reads
     simulate_pacbio(args, PACBIO_READ_COUNT)
     # simulate ONT reads

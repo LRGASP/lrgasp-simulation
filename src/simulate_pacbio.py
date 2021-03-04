@@ -17,7 +17,7 @@ logger = logging.getLogger('LRGASP')
 
 
 def simulate_pacbio(args, read_count=1000):
-    logger.info("Simulating PacBio reads...")
+    logger.info("Simulating PacBio reads with IsoSeqSim...")
     src_path = os.path.dirname(os.path.realpath(__file__))
     isoseqsim = os.path.join(src_path, "isoseqsim/bin/isoseqsim.py")
     param_dir = os.path.join(src_path, "isoseqsim/utilities/")
