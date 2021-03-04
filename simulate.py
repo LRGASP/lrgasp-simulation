@@ -32,6 +32,7 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--counts", "-c", help="transcript abundances in TSV format (output of quantify.py)", type=str)
     parser.add_argument("--threads", "-t", help="number of CPU threads for simulators [16]", default=16, type=int)
     parser.add_argument("--seed", "-s", help="randomizer seed [11]", default=11, type=int)
+    parser.add_argument("--species", help="species to simulate from 'human' or 'mouse'", default="human", type=str)
 
     args = parser.parse_args(args, namespace)
 
@@ -40,6 +41,9 @@ def parse_args(args=None, namespace=None):
         print("WARNING! Output folder already exists, some files may be overwritten")
     else:
         os.makedirs(args.output)
+
+    if args.species not in ['human', 'mouse']:
+        raise ValueError("--species value must be 'human' or 'mouse'")
 
     args.tmp_dir = os.path.join(args.output, "tmp")
     if not os.path.exists(args.output):
