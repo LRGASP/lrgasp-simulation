@@ -10,7 +10,6 @@ logger = logging.getLogger('LRGASP')
 
 
 def simulate_ont(args, read_count=1000):
-    logger.info("Simulating ONT reads...")
     src_path = os.path.dirname(os.path.realpath(__file__))
     nanosim = os.path.join(src_path, "NanoSim/src/simulator.py")
     model_dir = os.path.join(src_path, "NanoSim/pre-trained_models/")
@@ -23,7 +22,7 @@ def simulate_ont(args, read_count=1000):
         model_name = 'human_NA12878_cDNA_Bham1_guppy'
         model_pref = model_dir + model_name + '/'
         molecule_type = 'cDNA_1D2'
-        uracil = 'False'
+        uracil = False
     else:
         logger.error("Unexpected ont_type value %s" % args.ont_type)
         return
@@ -50,6 +49,7 @@ def simulate_ont(args, read_count=1000):
                              "-b", "guppy",
                              "-o", os.path.join(args.output, "ONT.simulated"),
                              "-n", str(read_count),
+                             "--fastq",
                              "-c", model_pref + 'training',
                              "-r", molecule_type, "--no_model_ir"]
     if uracil:
@@ -60,5 +60,7 @@ def simulate_ont(args, read_count=1000):
     if result.returncode != 0:
         logger.error("NanoSim failed, contact developers for support.")
         return
+
+    # TODO - remove isoform IDs from output and rewrite fastas
 
     logger.info("Done.")

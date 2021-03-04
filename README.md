@@ -42,7 +42,15 @@ simulate reads based on reference transcripts only, simply omit `--sqanti_prefix
 
 To prepare reference data run:
 
-``` prepare_reference_data.py -a <annotation.gtf> -t <transcripts.fa> -g <genome.fa> -q <SQANTI output prefix> --n_random_isoforms <int> -o <output_prefix>  ```
+```bash
+prepare_reference_data.py \
+  -a <annotation.gtf> \
+  -t <transcripts.fa> \
+  -g <genome.fa> \
+  -q <SQANTI output prefix> \
+  --n_random_isoforms <int> \
+  -o <output_prefix>
+```
 
 Available options are:
 
@@ -99,11 +107,22 @@ Available options are:
 
 To simulate reads run
 
-``` simulate.py --reference_dir <path/to/references/> --reference_name <reference_prefix> --counts <counts.tsv> -o <output_dir> ```
+```bash
+simulate.py \
+  --reference_prefix  <path/to/references/prefix> \
+  --reference_name <reference_prefix> \
+  -o <output_dir>
+```
 
 For example, to run on test data included in the repository launch
 
-``` simulate.py --reference_dir data/ --reference_name test --counts data/test.counts.tsv -o test_simulation ```
+```bash
+python simulate.py \
+  --reference_prefix data/test_data/test \
+  --counts data/test_data/test.counts.tsv \
+  --test_mode \
+  -o test_simulation
+```
 
 Available options are:
 

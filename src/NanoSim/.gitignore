@@ -1,3 +1,9 @@
+# Compiled intermediate files
+*.pyc
+
+# IDE
+.idea
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -5,6 +11,25 @@ __pycache__/
 
 # C extensions
 *.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -24,9 +49,8 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
-*.cover
+*,cover
 .hypothesis/
-.pytest_cache/
 
 # Translations
 *.mo
@@ -35,7 +59,6 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
 
 # Flask stuff:
 instance/
@@ -53,44 +76,24 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# MacOS .DS_store folders
-*.DS_Store*
-
 # pyenv
 .python-version
-
-# results from running run_simulator_test.sh
-test_simulation/
 
 # celery beat schedule file
 celerybeat-schedule
 
-# SageMath parsed files
-*.sage.py
-
-# Environments
+# dotenv
 .env
+
+# virtualenv
 .venv
-env/
 venv/
 ENV/
-env.bak/
-venv.bak/
 
 # Spyder project settings
 .spyderproject
-.spyproject
 
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-
-# NanoSim untarred models
-src/NanoSim/pre-trained_models/*/
-
-.idea
+>>>>>>> e07dcae... Add .gitignore and ignore Python compiled files
