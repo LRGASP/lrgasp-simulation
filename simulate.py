@@ -89,11 +89,14 @@ def run_pipeline(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     # simulate short reads
-    simulate_illumina(args, args.illumina_count)
+    if args.illumina_count:
+        simulate_illumina(args, args.illumina_count)
     # simulate PacBio reads
-    simulate_pacbio(args, args.pb_count)
+    if args.pb_count:
+        simulate_pacbio(args, args.pb_count)
     # simulate ONT reads
-    simulate_ont(args, args.ont_count)
+    if args.ont_count:
+        simulate_ont(args, args.ont_count)
 
     shutil.rmtree(args.tmp_dir, ignore_errors=True)
     logger.info(" === LRGASP simulation pipeline finished === ")
