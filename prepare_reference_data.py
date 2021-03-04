@@ -51,13 +51,22 @@ def check_params(args):
     return args.reference_annotation is not None and args.reference_transcripts is not None
 
 
-def replace_gene_id(l, new_gene_id):
+def replace_gene_isoform_id(l, new_gene_id, new_transcript_id):
     gene_id_pos = l.find("gene_id")
-    if gene_id_pos == -1:
-        return l
-    end_pos = l.find(";", gene_id_pos)
+    if gene_id_pos != -1:
+        end_pos = l.find(";", gene_id_pos)
+        l = l[:gene_id_pos + len("gene_id")] + ' "' + new_gene_id + '"' + l[end_pos:]
 
-    return l[:gene_id_pos + len("gene_id")] + ' "' + new_gene_id + '"' + l[end_pos:]
+    t_id_pos = l.find("transcript_id")
+    if t_id_pos != -1:
+        end_pos = l.find(";", t_id_pos)
+        l = l[:t_id_pos + len("transcript_id")] + ' "' + new_transcript_id + '"' + l[end_pos:]
+
+    return l
+
+
+def modify_isofrom_id(t_id):
+    return t_id.replace("_", "")
 
 
 def select_sqanti_isoforms(args):
@@ -103,7 +112,7 @@ def select_sqanti_isoforms(args):
     novel_isoform_file = args.output + ".novel_isoforms.tsv"
     novel_isoform_handler = open(novel_isoform_file, "w")
     for t_id in sorted(selected_isoform_set):
-        novel_isoform_handler.write(t_id + "\n")
+        novel_isoform_handler.write(modify_isofrom_id(t_id) + "\n")
     novel_isoform_handler.close()
 
     # gene_id -> [(isoform_id, GTF lines)]
@@ -126,11 +135,11 @@ def select_sqanti_isoforms(args):
 
             isoform_id = tokens[9].replace('"','').replace(';','')
             if isoform_id in selected_isoform_set:
-                current_transcript_entry = replace_gene_id(l, novel_isoforms[isoform_id])
+                current_transcript_entry = replace_gene_isoform_id(l, novel_isoforms[isoform_id], modify_isofrom_id(isoform_id))
                 current_transcrtip_id = isoform_id
 
         elif enrty_type == 'exon' and current_transcrtip_id:
-            current_transcript_entry += replace_gene_id(l, novel_isoforms[current_transcrtip_id])
+            current_transcript_entry += replace_gene_isoform_id(l, novel_isoforms[current_transcrtip_id], modify_isofrom_id(current_transcrtip_id))
 
     if current_transcrtip_id:
         # last transcript was selected, adding to the annotation
@@ -215,7 +224,7 @@ def insert_novel_transcripts_to_fasta(args, novel_annotation):
         chr_seq = genome_records[chr_id]
         for transcript_tuple in genomic_regions[chr_id]:
             transcript_seq = extract_transcript_from_fasta(chr_seq, transcript_tuple[1], transcript_tuple[2])
-            record = SeqRecord(Seq(transcript_seq), id=transcript_tuple[0], description="novel")
+            record = SeqRecord(Seq(transcript_seq), id=modify_isofrom_id(transcript_tuple[0]), description="novel")
             new_transcripts.append(record)
 
     for record in SeqIO.parse(args.reference_transcripts, "fasta"):
