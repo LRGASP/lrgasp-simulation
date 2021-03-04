@@ -382,8 +382,8 @@ def read_profile(ref_g, number_list, model_prefix, per, mode, strandness, ref_t=
         with open(exp, 'r') as exp_file:
             header = exp_file.readline()
             for line in exp_file:
-                parts = line.split()
-                transcript_id = parts[0]
+                parts = line.split("\t")
+                transcript_id = parts[0].split(".")[0]
                 tpm = float(parts[2])
                 if  tpm > 0:
                     dict_exp[transcript_id] = tpm
