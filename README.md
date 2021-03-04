@@ -20,9 +20,14 @@ The pipeline consists of main 3 steps:
 
 ### Requirements
 
+- python3
 - biopython
 - gffutils
 - pysam
+- htseq
+- numpy
+- scipy
+- sklearn  
 - minimap2
 
 ## Preparing reference data
@@ -134,10 +139,13 @@ The output files will be stored in `chr22_simulated` folder. Output description 
 ## Output
 
 - `simulator.log` log file
+- `Illumina.simulated_1.fq`, `Illumina.simulated_2.fq` Illumina paired end reads
+- `Illumina.simulated.sim.genes.results`, `Illumina.simulated.sim.isoforms.results` de facto expression values for Illumina reads
 - `PacBio.simulated.fasta` simulated PacBio CCS reads
 - `PacBio.simulated.isoform_counts.tsv` de facto counts for every isoform
 - `PacBio.simulated.read_to_isoform.tsv` read ID to isofrom ID table
 - `PacBio.simulated.tsv` internal IsoSeqSim file (detailed information on simulated isoforms)
+- 
 
 
 ## Reference data

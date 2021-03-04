@@ -13,7 +13,7 @@ import shutil
 import random
 import numpy as np
 
-
+from src.simulate_ont import *
 from src.simulate_pacbio import *
 from src.simulate_illumina import *
 
@@ -89,11 +89,11 @@ def run_pipeline(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     # simulate short reads
-    simulate_illumina(args, args.illumina_count)
+    #simulate_illumina(args, args.illumina_count)
     # simulate PacBio reads
-    simulate_pacbio(args, args.pb_count)
+    #simulate_pacbio(args, args.pb_count)
     # simulate ONT reads
-    #simulate_ont(args, args.ont_count)
+    simulate_ont(args, args.ont_count)
 
     shutil.rmtree(args.tmp_dir)
     logger.info(" === LRGASP simulation pipeline finished === ")

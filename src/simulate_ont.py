@@ -15,34 +15,41 @@ def simulate_ont(args, read_count=1000):
     nanosim = os.path.join(src_path, "NanoSim/src/simulator.py")
     model_dir = os.path.join(src_path, "NanoSim/pre-trained_models/")
     if args.species == 'human':
-        model = model_dir+'human_NA12878_dRNA_Bham1_guppy.tar.gz'
-        model_pref = model_dir+'human_NA12878_dRNA_Bham1_guppy/'
+        model_name = 'human_NA12878_dRNA_Bham1_guppy'
+        model_pref = model_dir+model_name+'/'
         molecule_type = 'dRNA'
     elif args.species == 'mouse':
-        model = model_dir+'human_NA12878_cDNA_Bham1_guppy.tar.gz'
-        model_pref = model_dir+'human_NA12878_cDNA_Bham1_guppy/'
+        model_name = 'human_NA12878_cDNA_Bham1_guppy'
+        model_pref = model_dir + model_name + '/'
         molecule_type = 'cDNA_1D2'
+    else:
+        logger.error("Unexpected species value %s" % args.species)
+        return
 
     # untar the model
-    cmd = ['tar', '-xf', model]
-    result = subprocess.run(cmd)
-    if result.returncode != 0:
-        logger.error("Untarring NanoSim training model failed.")
+    if not os.path.exists(model_pref):
+        logger.info("Unpackking NanoSim model")
+        cmd = ['tar', '-xzf', model_name+'.tar.gz']
+        current_wd = os.getcwd()
+        os.chdir(model_dir)
+        result = subprocess.run(cmd)
+        os.chdir(current_wd)
+        if result.returncode != 0:
+            logger.error("Untarring NanoSim training model failed.")
 
-    ref_prefix = os.path.join(args.reference_dir, args.reference_name)
+    logger.info("Simulating ONT reads with Trans-NanoSim...")
+    ref_prefix = args.reference_prefix
     result = subprocess.run([nanosim, 'transcriptome',
                              "-rg", ref_prefix + ".genome.fasta",
                              "-rt", ref_prefix + ".transcripts.fasta",
-                             "-e", args.counts,
-                             "-t", args.threads,
-                             "--seed", args.seed,
+                             "-e", str(args.counts),
+                             "-t", str(args.threads),
+                             "--seed", str(args.seed),
                              "-b", "guppy",
-                             "-o", os.path.join(args.output, "ONT.simulated")])
-                             "-n", read_count,
-                             "--polya",
-                             "-c", "model_pref",
-                             "-r", molecule_type
-                             )
+                             "-o", os.path.join(args.output, "ONT.simulated"),
+                             "-n", str(read_count),
+                             "-c", model_pref + 'training',
+                             "-r", molecule_type, "--no_model_ir"])
 
     # do we also want to simulate with U instead of T (--uracil option) when
     # simulating dRNA?
