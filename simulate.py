@@ -30,7 +30,7 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--counts", "-c", help="transcript abundances in TSV format (output of quantify.py)", type=str)
     parser.add_argument("--threads", "-t", help="number of CPU threads for simulators [16]", default=16, type=int)
     parser.add_argument("--seed", "-s", help="randomizer seed [11]", default=11, type=int)
-    parser.add_argument("--species", help="species to simulate from 'human' or 'mouse'", default="human", type=str, choices={'human', 'mouse'})
+    parser.add_argument("--ont_type", help="type of ONT reads to simulate, 'dRNA' or 'cDNA'", default="cDNA", type=str, choices={'dRNA', 'cDNA'})
     parser.add_argument("--illumina_count", help="number of Illumina read pairs to simulate [100M]", default=100000000, type=int)
     parser.add_argument("--pb_count", help="number of PacBio reads to simulate [10M]", default=10000000, type=int)
     parser.add_argument("--ont_count", help="number of ONT reads to simulate [20M]", default=20000000, type=int)
@@ -43,9 +43,6 @@ def parse_args(args=None, namespace=None):
         print("WARNING! Output folder already exists, some files may be overwritten")
     else:
         os.makedirs(args.output)
-
-    if args.species not in ['human', 'mouse']:
-        raise ValueError("--species value must be 'human' or 'mouse'")
 
     if args.test_mode:
         args.illumina_count = 100000

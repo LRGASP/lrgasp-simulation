@@ -4,16 +4,16 @@
 ## About the pipeline
 
 This pipeline is designed for simulating RNA sequencing datasets that include
-PacBio, Oxford Nanopore and Illumina reads based on the provided reference data and 
-expression profile. Basically, it is a wrapper for several simulation tools: 
+PacBio, Oxford Nanopore and Illumina reads based on the provided reference data and
+expression profile. Basically, it is a wrapper for several simulation tools:
 - [IsoSeqSim](https://github.com/yunhaowang/IsoSeqSim)
 - [Trans-NanoSim](https://github.com/bcgsc/NanoSim)
 - [RSEM simulator](http://deweylab.biostat.wisc.edu/rsem/README.html)
 
 The pipeline consists of main 3 steps:
 - Preparing reference data, which includes insertting artificial novel isoforms.
-  These "novel" isoforms can be obtained by mapping any mammalian reference transcripts 
-  onto your genome (human or mouse) and processing them with [SQANTI3](https://github.com/ConesaLab/SQANTI3). 
+  These "novel" isoforms can be obtained by mapping any mammalian reference transcripts
+  onto your genome (human or mouse) and processing them with [SQANTI3](https://github.com/ConesaLab/SQANTI3).
 - Quantifying transcript abundance, which requires any real long-read RNA dataset.
 - Generating simulated reads and supplementary information, which will be available to the evaluators only.
 
@@ -64,12 +64,12 @@ Available options are:
 
 If both `--n_random_isoforms` and `--isoform_list` are ignored, all isoforms reported by SQANTI will be inserted.
 
-If you want to skip inserting novel artificial isoforms and simulate reads based on reference transcripts only, 
+If you want to skip inserting novel artificial isoforms and simulate reads based on reference transcripts only,
 simply omit `--sqanti_prefix` option.
 
 ## Quantifying transcript abundance
 
-To create an expression profile, you need to estimate transcript abundances 
+To create an expression profile, you need to estimate transcript abundances
 using real long-read sequencing data. To do so, add [`minimap2`](https://github.com/lh3/minimap2) to your
 `$PATH` variable and run
 
@@ -116,8 +116,18 @@ Available options are:
 
 ``` --threads, -t``` number of threads
 
+``` --seed, -s``` random seed to use
 
-## Example 
+``` --ont_type``` type of molecule to simulate, 'dRNA' or 'cDNA'
+
+``` --illumina_count``` number of Illumina read pairs to simulate
+
+``` --pb_count``` number of PacBio reads to simulate
+
+``` --ont_count``` number of ONT reads to simulate
+
+
+## Example
 
 Example data (Human chromosome 22) can be found in `data/human_chr22.tar.gz`:
 
@@ -146,7 +156,7 @@ The output files will be stored in `chr22_simulated` folder. Output description 
 - `PacBio.simulated.isoform_counts.tsv` de facto counts for every isoform
 - `PacBio.simulated.read_to_isoform.tsv` read ID to isofrom ID table
 - `PacBio.simulated.tsv` internal IsoSeqSim file (detailed information on simulated isoforms)
-- 
+-
 
 
 ## Reference data
