@@ -17,9 +17,6 @@ import numpy as np
 from src.simulate_pacbio import *
 from src.simulate_illumina import *
 
-# TODO insert correct numbers
-PACBIO_READ_COUNT = 1000
-
 
 logger = logging.getLogger('LRGASP')
 
@@ -33,7 +30,11 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--counts", "-c", help="transcript abundances in TSV format (output of quantify.py)", type=str)
     parser.add_argument("--threads", "-t", help="number of CPU threads for simulators [16]", default=16, type=int)
     parser.add_argument("--seed", "-s", help="randomizer seed [11]", default=11, type=int)
-    parser.add_argument("--species", help="species to simulate from 'human' or 'mouse'", default="human", type=str)
+    parser.add_argument("--species", help="species to simulate from 'human' or 'mouse'", default="human", type=str, choices={'human', 'mouse'})
+    parser.add_argument("--illumina_count", help="number of Illumina read pairs to simulate [100M]", default=100000000, type=int)
+    parser.add_argument("--pb_count", help="number of PacBio reads to simulate [10M]", default=10000000, type=int)
+    parser.add_argument("--ont_count", help="number of ONT reads to simulate [20M]", default=20000000, type=int)
+    parser.add_argument("--test_mode", help="set low numbers of simulated reads for quick testing", action='store_true', default=False)
 
     args = parser.parse_args(args, namespace)
 
@@ -45,6 +46,11 @@ def parse_args(args=None, namespace=None):
 
     if args.species not in ['human', 'mouse']:
         raise ValueError("--species value must be 'human' or 'mouse'")
+
+    if args.test_mode:
+        args.illumina_count = 100000
+        args.ont_count = 1000
+        args.pb_count = 1000
 
     args.tmp_dir = os.path.join(args.output, "tmp")
     if not os.path.exists(args.output):
@@ -83,10 +89,11 @@ def run_pipeline(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     # simulate short reads
-    simulate_illumina(args)
+    simulate_illumina(args, args.illumina_count)
     # simulate PacBio reads
-    simulate_pacbio(args, PACBIO_READ_COUNT)
+    simulate_pacbio(args, args.pb_count)
     # simulate ONT reads
+    #simulate_ont(args, args.ont_count)
 
     shutil.rmtree(args.tmp_dir)
     logger.info(" === LRGASP simulation pipeline finished === ")
