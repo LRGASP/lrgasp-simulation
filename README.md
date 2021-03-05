@@ -115,7 +115,7 @@ simulate.py \
   -o <output_dir>
 ```
 
-For example, to run on test data included in the repository launch
+For example, to run on test data included in the repository launch:
 
 ```bash
 python simulate.py \
@@ -123,6 +123,11 @@ python simulate.py \
   --counts data/test_data/test.counts.tsv \
   --test_mode \
   -o test_simulation
+```
+
+or simply run the premade script:
+```bash
+bash run_simulate_test.sh
 ```
 
 Available options are:
