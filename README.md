@@ -26,7 +26,8 @@ The pipeline consists of main 3 steps:
 - pysam
 - htseq
 - numpy
-- scipy  
+- scipy
+- pandas
 - [NanoSim requirements](https://github.com/bcgsc/NanoSim)
 - [RSEM requirements](https://github.com/deweylab/RSEM#compilation) (includes C++, R, perl)  
 - minimap2
