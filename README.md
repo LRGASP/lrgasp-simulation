@@ -131,24 +131,18 @@ bash run_simulate_test.sh
 
 Available options are:
 
-``` --reference_prefix, -r``` prefix for reference files (files are `.genome.fasta`, `.transcripts.fasta` and `.annotation.gtf`);
-                              use the output of `prepare_reference_data.py`;
-
-```--counts, -c``` transcript abundances in TSV format (output of `quantify.py`)
-
-``` --output, -o``` output folder
-
-``` --threads, -t``` number of threads
-
-``` --seed, -s``` random seed to use
-
-``` --ont_type``` type of molecule to simulate, 'dRNA' or 'cDNA'
-
-``` --illumina_count``` number of Illumina read pairs to simulate
-
-``` --pb_count``` number of PacBio reads to simulate
-
-``` --ont_count``` number of ONT reads to simulate
+```
+--reference_prefix, -r   prefix for reference files (files are '.genome.fasta', '.transcripts.fasta' and '.annotation.gtf');
+                              use the output of 'prepare_reference_data.py'
+--counts, -c              transcript abundances in TSV format (output of 'quantify.py')
+--output, -o output folder
+--threads, -t  number of threads
+--seed, -s  random seed to use
+--ont_type  type of molecule to simulate, 'dRNA' or 'cDNA'
+--illumina_count  number of Illumina read pairs to simulate
+--pb_count  number of PacBio reads to simulate
+--ont_count number of ONT reads to simulate
+```
 
 
 ## Example
