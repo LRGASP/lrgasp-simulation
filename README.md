@@ -100,6 +100,7 @@ Available options are:
                        we recommend to use a list of novel isoforms generated at the previous step;
 
 --seed, -m  randomizer seed
+```
 
 ## Simulating reads
 
