@@ -111,7 +111,6 @@ To simulate reads run
 ```bash
 simulate.py \
   --reference_prefix  <path/to/references/prefix> \
-  --reference_name <reference_prefix> \
   -o <output_dir>
 ```
 
