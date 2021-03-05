@@ -55,21 +55,16 @@ prepare_reference_data.py \
 
 Available options are:
 
-``` --output, -o ``` output prefix
-
-```--reference_annotation, -a``` reference annotation (GTF/.db)
-
-```--reference_transcripts, -t``` reference transcripts in FASTA format
-
-```--reference_genome, -g``` reference genome in FASTA format
-
-```--sqanti_prefix, -q``` prefix of SQANTI output (`_classification.txt` and `_corrected.gtf` are needed)
-
-```--n_random_isoforms, -n ``` insert this number of random novel artificial isoforms into the annotation
-
-```--isoform_list, -l``` insert only novel artificial isoforms from a given file
-
-```--seed, -s``` randomizer seed [11]
+```
+--output, -o  output prefix
+--reference_annotation, -a  reference annotation (GTF/.db)
+--reference_transcripts, -t  reference transcripts in FASTA format
+--reference_genome, -g  reference genome in FASTA format
+--sqanti_prefix, -q prefix of SQANTI output ('_classification.txt' and '_corrected.gtf' are needed)
+--n_random_isoforms, -n insert this number of random novel artificial isoforms into the annotation
+--isoform_list, -l insert only novel artificial isoforms from a given file
+--seed, -s  randomizer seed [11]
+```
 
 If both `--n_random_isoforms` and `--isoform_list` are ignored, all isoforms reported by SQANTI will be inserted.
 
@@ -82,27 +77,29 @@ To create an expression profile, you need to estimate transcript abundances
 using real long-read sequencing data. To do so, add [`minimap2`](https://github.com/lh3/minimap2) to your
 `$PATH` variable and run
 
-``` quantify.py -r <trnascripts.fasta> --fastq <reads.fastq> -o counts.tsv```
+```bash
+quantify.py \
+    -r <transcripts.fasta> \
+    --fastq <reads.fastq> \
+    -o counts.tsv
+```
 
 We recommend to use transcript sequences obtained at the previous step.
 
 Available options are:
 
-``` --reference_transcripts, -r``` reference transcriptome in FASTA format
-
-``` --fastq, -f``` long RNA reads in FASTQ format
-
-``` --output, -o``` output file with abundances (counts and TPM) in TSV format
-
-``` --threads, -t``` number of threads for `minimap2`
-
-``` --mandatory, -m``` file with a list of mandatory transcripts to be included,
+```
+--reference_transcripts, -r reference transcriptome in FASTA format
+--fastq, -f long RNA reads in FASTQ format
+--output, -o  output file with abundances (counts and TPM) in TSV format
+--threads, -t  number of threads for minimap2
+--mandatory, -m file with a list of mandatory transcripts to be included,
                        counts are assigned randomly, can be a TSV with transcript ids in the first column;
                        this option is used to provide artificial "novel" transcripts;
                        make sure they are included in the reference;
                        we recommend to use a list of novel isoforms generated at the previous step;
 
-``` --seed, -m``` randomizer seed
+--seed, -m  randomizer seed
 
 ## Simulating reads
 
@@ -132,8 +129,9 @@ bash run_simulate_test.sh
 Available options are:
 
 ```
---reference_prefix, -r   prefix for reference files (files are '.genome.fasta', '.transcripts.fasta' and '.annotation.gtf');
-                              use the output of 'prepare_reference_data.py'
+--reference_prefix, -r   prefix for reference files (files are '.genome.fasta',
+                          '.transcripts.fasta' and '.annotation.gtf');
+                          use the output of 'prepare_reference_data.py'
 --counts, -c              transcript abundances in TSV format (output of 'quantify.py')
 --output, -o output folder
 --threads, -t  number of threads
@@ -153,28 +151,59 @@ Unpack the data by running `tar -xzf human_chr22.tar.gz` in `data` folder and la
 
 Step 1: prepare reference data with 50 artificial novel isoforms
 
-```prepare_reference_data.py --reference_annotation data/human_chr22/gencode.v32.annotation.chr22.gtf --reference_transcripts data/human_chr22/gencode.v32.transcripts.chr22.fa --reference_genome data/human_chr22/GRCh38.chr22.fa --sqanti_prefix data/human_chr22/rat_human_chr22 --n_random_isoforms 50 --output reference_data_chr22/human.chr22 ```
+```bash
+prepare_reference_data.py \
+  --reference_annotation data/human_chr22/gencode.v32.annotation.chr22.gtf \
+  --reference_transcripts data/human_chr22/gencode.v32.transcripts.chr22.fa \
+  --reference_genome data/human_chr22/GRCh38.chr22.fa \
+  --sqanti_prefix data/human_chr22/rat_human_chr22 \
+  --n_random_isoforms 50 \
+  --output reference_data_chr22/human.chr22
+```
 
 Step 2: generate expression profile based on real PacBio CCS data
 
-```quantify.py --fastq data/human_chr22/Human.PacBio.ENCFF.chr22.fq -t 16 --reference_transcripts reference_data_chr22/human.chr22.transcripts.fasta --mandatory reference_data_chr22/human.chr22.novel_isoforms.tsv --output reference_data_chr22/human.chr22.counts.tsv```
+```bash
+quantify.py \
+  --fastq data/human_chr22/Human.PacBio.ENCFF.chr22.fq \
+  -t 16 \
+  --reference_transcripts reference_data_chr22/human.chr22.transcripts.fasta \
+  --mandatory reference_data_chr22/human.chr22.novel_isoforms.tsv \
+  --output reference_data_chr22/human.chr22.counts.tsv
+```
 
 Step 3: simulate data
 
-```simulate.py --reference_prefix reference_data_chr22/human.chr22 --counts reference_data_chr22/human.chr22.counts.tsv -t 16 --output chr22_simulated```
+```bash
+simulate.py \
+  --reference_prefix reference_data_chr22/human.chr22 \
+  --counts reference_data_chr22/human.chr22.counts.tsv \
+  -t 16 \
+  --output chr22_simulated
+```
 
 The output files will be stored in `chr22_simulated` folder. Output description is provided in the following section.
 
 ## Output
 
 - `simulator.log` log file
+
+### Illumina simulation results
 - `Illumina.simulated_1.fq`, `Illumina.simulated_2.fq` Illumina paired end reads
 - `Illumina.simulated.sim.genes.results`, `Illumina.simulated.sim.isoforms.results` de facto expression values for Illumina reads
+
+### PacBio simulation results
 - `PacBio.simulated.fasta` simulated PacBio CCS reads
 - `PacBio.simulated.isoform_counts.tsv` de facto counts for every isoform
-- `PacBio.simulated.read_to_isoform.tsv` read ID to isofrom ID table
+- `PacBio.simulated.read_to_isoform.tsv` read ID to isoform ID table
 - `PacBio.simulated.tsv` internal IsoSeqSim file (detailed information on simulated isoforms)
--
+
+### ONT simulation results
+- `ONT.simulated_aligned_reads.fastq` simulated alignable ONT reads
+- `ONT.simulated_unaligned_reads.fastq` simulated unalignable ONT reads
+- `ONT.simulated.isoform_counts.tsv` de facto counts for every isoform from both alignable and unalignable reads
+- `ONT.simulated.read_to_isoform.tsv` read ID to isoform ID table
+- `ONT.simulated_aligned_error_profile` NanoSim simulation error profile
 
 
 ## Reference data
