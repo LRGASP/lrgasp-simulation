@@ -110,7 +110,8 @@ def simulate_ont(args, read_count=1000):
         ifile.close()
 
     nanosim_aux_dir = os.path.join(args.output, "NanoSim_data")
-    os.makedirs(nanosim_aux_dir)
+    if not os.path.exists(nanosim_aux_dir):
+        os.makedirs(nanosim_aux_dir)
     for aux_file_name in ["ONT.simulated_aligned_reads.fastq", "ONT.simulated_unaligned_reads.fastq",
                           "ONT.simulated_aligned_error_profile", "ONT.simulated_unaligned_error_profile"]:
         aux_path = os.path.join(args.output, aux_file_name)
