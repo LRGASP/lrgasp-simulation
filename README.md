@@ -179,7 +179,7 @@ Step 3: simulate data
 simulate.py \
   --reference_prefix reference_data_chr22/human.chr22 \
   --counts reference_data_chr22/human.chr22.counts.tsv \
-  -t 16 \
+  -t 16 --test_mode \
   --output chr22_simulated
 ```
 

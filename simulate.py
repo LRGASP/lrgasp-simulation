@@ -46,7 +46,7 @@ def parse_args(args=None, namespace=None):
 
     if args.test_mode:
         args.illumina_count = 100000
-        args.ont_count = 1000
+        args.ont_count = 10000
         args.pb_count = 5000
 
     args.tmp_dir = os.path.join(args.output, "tmp")
