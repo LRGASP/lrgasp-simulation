@@ -154,8 +154,8 @@ Step 1: prepare reference data with 50 artificial novel isoforms
 
 ```bash
 prepare_reference_data.py \
-  --reference_annotation data/human_chr22/gencode.v32.annotation.chr22.gtf \
-  --reference_transcripts data/human_chr22/gencode.v32.transcripts.chr22.fa \
+  --reference_annotation data/human_chr22/gencode.v36.annotation.chr22.gtf \
+  --reference_transcripts data/human_chr22/gencode.v36.transcripts.chr22.fa \
   --reference_genome data/human_chr22/GRCh38.chr22.fa \
   --sqanti_prefix data/human_chr22/rat_human_chr22 \
   --n_random_isoforms 50 \

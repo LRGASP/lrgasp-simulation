@@ -168,14 +168,21 @@ def load_gene_db(args):
 def insert_novel_transcripts_to_gtf(args, genedb, novel_annotation):
     extended_annotation_file = args.output + ".annotation.gtf"
     logger.info("Saving extended gene annotation (takes a while)...")
+    added_transcripts = set()
     with open(extended_annotation_file, "w") as f:
         for record in genedb.all_features():
             f.write(str(record) + '\n')
             if record.featuretype == 'gene' and record.id in novel_annotation:
                 # add novel isoforms
                 for t in novel_annotation[record.id]:
+                    logger.debug("Appending %s to the annotation" % t[0])
+                    added_transcripts.add(t[0])
                     f.write(t[1])
     logger.info("Extended annotation saved to %s" % extended_annotation_file)
+    for g in novel_annotation:
+        for t in novel_annotation[g]:
+            if t[0] not in added_transcripts:
+                logger.warning("Gene %s, transcripts %s are missing" % (g, t[0]))
 
 
 def parse_transcript(gtf_fragment):
