@@ -1938,6 +1938,8 @@ def main():
                           default=1)
     parser_t.add_argument('--uracil', help='Converts the thymine (T) bases to uracil (U) in the output fasta format',
                           action='store_true', default=False)
+    parser_t.add_argument('--aligned_only', action='store_true', default=False,
+                          help='Do not add background noise reads')
 
     parser_mg = subparsers.add_parser('metagenome', help="Run the simulator on metagenome mode")
     parser_mg.add_argument('-gl', '--genome_list', help="Reference metagenome list, tsv file, the first column is "
@@ -1988,9 +1990,7 @@ def main():
     parser_mg.add_argument('--chimeric', help='Simulate chimeric reads', action='store_true', default=False)
     parser_mg.add_argument('-t', '--num_threads', help='Number of threads for simulation (Default = 1)', type=int,
                            default=1)
-    parser.add_argument('--aligned_only', action='store_true', default=False,
-                        help='Do not add background noise reads')
-    
+
     args = parser.parse_args()
 
     if len(sys.argv) == 1:
