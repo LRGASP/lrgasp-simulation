@@ -79,7 +79,6 @@ def simulate_ont(args, read_count=1000):
         fname = f+'_no_transcript_id'
         ifile = open(f, 'r')
         ofile = open(fname, 'w')
-        logger.info(str(df))
         for line in ifile:
             if line.startswith('@'):
 
@@ -88,7 +87,6 @@ def simulate_ont(args, read_count=1000):
                 tid = tid.split('_')[0]
 
                 # convert to non-butchered tid and add to read map
-                logger.info(tid)
                 correct_tid = df.loc[df.nanosim_tid == tid, 'tid'].tolist()
                 if not correct_tid:
                     logger.warning("%s was not found in the annotation, skipping" % tid)
