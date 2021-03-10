@@ -63,6 +63,7 @@ def simulate_ont(args, read_count=1000):
         return
 
     # get the real transcript IDs because NanoSim butchers them
+    logger.info("Reading GTF annotation to restore original isoform names...")
     gtf = ref_prefix + ".annotation.gtf"
     df = pd.read_csv(gtf, sep='\t',  header=None, usecols=[2,8])
     df.columns = ['entry_type', 'fields']
@@ -73,13 +74,17 @@ def simulate_ont(args, read_count=1000):
     df = df[['tid', 'nanosim_tid']]
 
     read_tid_map = {}
-    fastqs = [os.path.join(args.output, "ONT.simulated_aligned_reads.fastq"),
-             os.path.join(args.output, "ONT.simulated_unaligned_reads.fastq")]
+    fastqs = [os.path.join(args.output, "ONT.simulated_aligned_reads.fastq")]
+    if args.noise_reads:
+        fastqs.append(os.path.join(args.output, "ONT.simulated_unaligned_reads.fastq"))
     read_num = 0
+    # dump everythin the same file
+    fname = os.path.join(args.output, 'ONT.simulated.fastq')
+    ofile = open(fname, 'w')
+
+    logger.info("Renaming and counting ONT reads...")
     for f in fastqs:
-        fname = f+'_no_transcript_id'
         ifile = open(f, 'r')
-        ofile = open(fname, 'w')
         for line in ifile:
             if line.startswith('@'):
 
@@ -102,12 +107,19 @@ def simulate_ont(args, read_count=1000):
             else:
                 ofile.write(line)
         ifile.close()
-        ofile.close()
 
-        # overwrite old file
-        os.rename(fname, f)
+    nanosim_aux_dir = os.path.join(args.output, "NanoSim_data")
+    os.makedirs(nanosim_aux_dir)
+    for aux_file_name in ["ONT.simulated_aligned_reads.fastq", "ONT.simulated_unaligned_reads.fastq",
+                          "ONT.simulated_aligned_error_profile", "ONT.simulated_unaligned_error_profile"]:
+        aux_path = os.path.join(args.output, aux_file_name)
+        if os.path.exists(aux_path):
+            os.rename(aux_path, os.path.join(nanosim_aux_dir, aux_file_name), )
+
+    ofile.close()
 
     # write read to tid map
+    logger.info("Saving de facto counts and read-to-isoform map")
     df = pd.DataFrame.from_dict(read_tid_map, orient='index')
     df.reset_index(inplace=True)
     df.columns = ['read_id', 'tid']
