@@ -40,6 +40,7 @@ def simulate_ont(args, read_count=1000):
 
     logger.info("Simulating ONT reads with Trans-NanoSim...")
     ref_prefix = args.reference_prefix
+    aligned_ony = "" if args.noise_reads else "--aligned_only"
     cmd = [nanosim, 'transcriptome',
                              "-rg", ref_prefix + ".genome.fasta",
                              "-rt", ref_prefix + ".transcripts.fasta",
@@ -51,7 +52,7 @@ def simulate_ont(args, read_count=1000):
                              "-n", str(read_count),
                              "--fastq",
                              "-c", model_pref + 'training',
-                             "-r", molecule_type, "--no_model_ir"]
+                             "-r", molecule_type, "--no_model_ir", aligned_ony]
     if uracil:
         cmd += ['--uracil']
 

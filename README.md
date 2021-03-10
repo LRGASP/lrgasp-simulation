@@ -141,6 +141,7 @@ Available options are:
 --illumina_count  number of Illumina read pairs to simulate
 --pb_count  number of PacBio reads to simulate
 --ont_count number of ONT reads to simulate
+--noise_reads add background noise reads (affects only Illumina and ONT)
 ```
 
 

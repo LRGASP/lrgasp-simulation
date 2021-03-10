@@ -2188,7 +2188,7 @@ def main():
         number_aligned = number_aligned_l[0]
         number_unaligned = number_unaligned_l[0]
         sys.stdout.write(strftime("%Y-%m-%d %H:%M:%S") + ': Aligned reads count: %d, Unadligned reads count %d\n' %
-                         (number_aligned, number_aligned))
+                         (number_aligned, number_unaligned))
         sys.stdout.flush()
         max_len = min(max_len, max_chrom)
         simulation(args.mode, out, dna_type, perfect, kmer_bias, basecaller, read_type, max_len, min_len, num_threads,
