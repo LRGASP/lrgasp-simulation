@@ -69,7 +69,8 @@ def simulate_illumina(args, read_count=100000):
     logger.info("Simulating Illumina reads with RSEM...")
     rsem_simulate = os.path.join(rsem_dir, "rsem-simulate-reads")
     model_file = os.path.join(rsem_dir, "models/Illumina150.RNA.model")
-    result = subprocess.run([rsem_simulate, rsem_ref_path, model_file, rsem_count_file, "0.0", str(read_count),
+    noise_fraction = 0.1 if args.noise_reads else 0.0
+    result = subprocess.run([rsem_simulate, rsem_ref_path, model_file, rsem_count_file, str(noise_fraction), str(read_count),
                              os.path.join(args.output, "Illumina.simulated"), "--seed", str(args.seed)])
     if result.returncode != 0:
         logger.error("RSEM simulator failed, contact developers for support.")

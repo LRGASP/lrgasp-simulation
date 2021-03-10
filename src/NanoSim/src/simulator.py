@@ -242,7 +242,7 @@ def get_length_kde(kde, num, log=False, flatten=True):
 
 
 def read_profile(ref_g, number_list, model_prefix, per, mode, strandness, ref_t=None, dna_type=None, abun=None,
-                 polya=None, exp=None, model_ir=False, chimeric=False):
+                 polya=None, exp=None, model_ir=False, chimeric=False, aligned_only=False):
     # Note var number_list (list) used to be number (int)
     global number_aligned_l, number_unaligned_l, number_segment_list
     global match_ht_list, error_par, trans_error_pr, match_markov_model
@@ -497,7 +497,7 @@ def read_profile(ref_g, number_list, model_prefix, per, mode, strandness, ref_t=
         with open(model_prefix + "_reads_alignment_rate", 'r') as u_profile:
             new = u_profile.readline().strip()
             rate = new.split('\t')[1]
-            if rate == "100%":
+            if rate == "100%" or aligned_only:
                 number_aligned_l = number_list
             else:
                 number_aligned_l = [int(round(x * float(rate) / (float(rate) + 1))) for x in number_list]
@@ -1988,6 +1988,8 @@ def main():
     parser_mg.add_argument('--chimeric', help='Simulate chimeric reads', action='store_true', default=False)
     parser_mg.add_argument('-t', '--num_threads', help='Number of threads for simulation (Default = 1)', type=int,
                            default=1)
+    parser.add_argument('--aligned_only', action='store_true', default=False,
+                        help='Do not add background noise reads')
     
     args = parser.parse_args()
 
@@ -2082,7 +2084,8 @@ def main():
         if dir_name != '':
             call("mkdir -p " + dir_name, shell=True)
 
-        read_profile(ref_g, number, model_prefix, perfect, args.mode, strandness, dna_type=dna_type, chimeric=chimeric)
+        read_profile(ref_g, number, model_prefix, perfect, args.mode, strandness, dna_type=dna_type, chimeric=chimeric,
+                     aligned_only=args.aligned_only)
 
         if median_len and sd_len:
             sys.stdout.write(strftime("%Y-%m-%d %H:%M:%S") + ": Simulating read length with log-normal distribution\n")
@@ -2180,10 +2183,13 @@ def main():
             call("mkdir -p " + dir_name, shell=True)
 
         read_profile(ref_g, number, model_prefix, perfect, args.mode, strandness, ref_t=ref_t, dna_type="linear",
-                     model_ir=model_ir, polya=polya, exp=exp)
+                     model_ir=model_ir, polya=polya, exp=exp, aligned_only=args.aligned_only)
 
         number_aligned = number_aligned_l[0]
         number_unaligned = number_unaligned_l[0]
+        sys.stdout.write(strftime("%Y-%m-%d %H:%M:%S") + ': Aligned reads count: %d, Unadligned reads count %d\n' %
+                         (number_aligned, number_aligned))
+        sys.stdout.flush()
         max_len = min(max_len, max_chrom)
         simulation(args.mode, out, dna_type, perfect, kmer_bias, basecaller, read_type, max_len, min_len, num_threads,
                    fastq, None, None, model_ir, uracil, polya)
@@ -2273,7 +2279,7 @@ def main():
             call("mkdir -p " + dir_name, shell=True)
 
         read_profile(genome_list, [], model_prefix, perfect, args.mode, strandness, dna_type=dna_type_list, abun=abun,
-                     chimeric=chimeric)
+                     chimeric=chimeric, aligned_only=args.aligned_only)
 
         # Add abundance variation
         global dict_abun, dict_abun_inflated

@@ -35,7 +35,8 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--pb_count", help="number of PacBio reads to simulate [10M]", default=10000000, type=int)
     parser.add_argument("--ont_count", help="number of ONT reads to simulate [20M]", default=20000000, type=int)
     parser.add_argument("--test_mode", help="set low numbers of simulated reads for quick testing", action='store_true', default=False)
-
+    parser.add_argument('--noise_reads', action='store_true', default=False,
+                        help='Add background noise reads (Illumina and ONT only), proportion defined by the models')
     args = parser.parse_args(args, namespace)
 
     if os.path.exists(args.output):
