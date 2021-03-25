@@ -12,13 +12,10 @@ import argparse
 import subprocess
 import pysam
 import random
+import numpy as np
 from collections import defaultdict
 
 logger = logging.getLogger('LRGASP')
-
-# list of "novel" transcript that will be added to the annotation / transcriptome for testing purposes
-MIN_NOVEL_COUNT = 10
-MAX_NOVEL_COUNT = 1000
 
 
 def parse_args(args=None, namespace=None):
@@ -87,9 +84,8 @@ def run_pipeline(args):
 
     # adding "novel" transcript that must be in the simulated data
     for transcript_id in mandatory_transcripts:
-        # we have a few "novel" transcripts, so we don't really care if their abundance is uniformly distributed,
-        # which is not biologically sound
-        transcript_counts[transcript_id] = random.randint(MIN_NOVEL_COUNT, MAX_NOVEL_COUNT)
+        # random counts with the possibility to have a few very low-expressed and high-expressed isoforms
+        transcript_counts[transcript_id] = 1 + int(np.random.gamma(1.4, 50))
 
     count_sum = 0.0
     for count in transcript_counts.values():
