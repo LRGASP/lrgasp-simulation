@@ -100,7 +100,7 @@ def simulate_ont(args, read_count=1000):
                     correct_tid = tid
                 else:
                     correct_tid = correct_tid[0]
-                read_id = 'ONT_simulated_read_{}'.format(read_num)
+                read_id = 'ONT.' + str(read_num) + "_" + correct_tid
                 read_num += 1
                 read_tid_map[read_id] = correct_tid
 

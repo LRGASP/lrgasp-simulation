@@ -32,7 +32,7 @@ def main(args):
         for read in res:
             read_seq = read[0]
             isoform_id = read[1]
-            read_id = "PacBio_simulated_read_" + str(read_counter)
+            read_id = "PB." + str(read_counter) + "_" + isoform_id
             read_counter += 1
             output_fasta.write(">" + read_id + "\n" + read_seq + "\n")
             output_read_info.write(read_id + "\t" + isoform_id + "\n")
