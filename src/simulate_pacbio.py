@@ -6,13 +6,6 @@ import logging
 import subprocess
 import os
 
-# From PacBio CCS
-# Mismatch rate:  0.00427494615062
-# Insertion rate: 0.00864794651776
-# Deletion rate:  0.00272382484128
-# Total error rate:       0.0156467175097
-
-
 logger = logging.getLogger('LRGASP')
 
 
@@ -27,7 +20,7 @@ def simulate_pacbio(args, read_count=1000):
                              "--genome", ref_prefix + ".genome.fasta", "--expr", args.counts,
                              "--c5", os.path.join(param_dir, "5_end_completeness.PacBio-Sequel.tab"),
                              "--c3", os.path.join(param_dir, "3_end_completeness.PacBio-Sequel.tab"),
-                             "--es", "0.0005", "--ei", "0.002", "--ed", "0.0006",
+                             "--es", "0.004", "--ei", "0.006", "--ed", "0.006",
                              "--read_number", str(read_count / 1000000.0), "--polya",
                              "--transcript", os.path.join(args.output, "PacBio.simulated.tsv"),
                              "-o", os.path.join(args.output, "PacBio.simulated")])

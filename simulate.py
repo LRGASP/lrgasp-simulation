@@ -33,7 +33,7 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--ont_type", help="type of ONT reads to simulate, 'dRNA' or 'cDNA'", default="cDNA", type=str, choices={'dRNA', 'cDNA'})
     parser.add_argument("--illumina_count", help="number of Illumina read pairs to simulate [100M]", default=100000000, type=int)
     parser.add_argument("--pb_count", help="number of PacBio reads to simulate [10M]", default=10000000, type=int)
-    parser.add_argument("--ont_count", help="number of ONT reads to simulate [20M]", default=20000000, type=int)
+    parser.add_argument("--ont_count", help="number of ONT reads to simulate [30M]", default=30000000, type=int)
     parser.add_argument("--test_mode", help="set low numbers of simulated reads for quick testing", action='store_true', default=False)
     parser.add_argument('--noise_reads', action='store_true', default=False,
                         help='Add background noise reads (Illumina and ONT only), proportion defined by the models')
