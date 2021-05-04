@@ -3,6 +3,7 @@
 @author: Chen Yang & Saber HafezQorani
 This script generates simulated Oxford Nanopore 2D reads (genomic and transcriptomic - cDNA/directRNA).
 """
+# NOTE: this file was modified by the LRGASP consortium comparing to the original source code
 
 from __future__ import print_function
 from __future__ import with_statement

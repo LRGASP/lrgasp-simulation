@@ -28,9 +28,10 @@ The pipeline consists of main 3 steps:
 - numpy
 - scipy
 - pandas
-- [NanoSim requirements](https://github.com/bcgsc/NanoSim)
-- [RSEM requirements](https://github.com/deweylab/RSEM#compilation) (includes C++, R, perl)  
 - minimap2
+- [NanoSim requirements](https://github.com/bcgsc/NanoSim) 
+- [RSEM requirements](https://github.com/deweylab/RSEM#compilation) (includes C++, R, perl)  
+
 
 ## Preparing reference data
 
@@ -210,10 +211,4 @@ The output files will be stored in `chr22_simulated` folder. Output description 
 
 ## Reference data
 
-Human ([gencode v37](https://www.gencodegenes.org/human/)):
-- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.annotation.gtf.gz
-- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37/gencode.v37.transcripts.fa.gz
-
-Mouse ([gencode M26](https://www.gencodegenes.org/mouse/)):
-- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M26/gencode.vM26.annotation.gtf.gz
-- ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M26/gencode.vM26.transcripts.fa.gz
+Recommended reference data can be found [here](https://github.com/LRGASP/lrgasp-submissions/blob/master/docs/reference-genomes.md).
