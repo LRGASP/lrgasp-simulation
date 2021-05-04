@@ -37,6 +37,8 @@ def parse_args(args=None, namespace=None):
     parser.add_argument("--test_mode", help="set low numbers of simulated reads for quick testing", action='store_true', default=False)
     parser.add_argument('--noise_reads', action='store_true', default=False,
                         help='Add background noise reads (Illumina and ONT only), proportion defined by the models')
+    parser.add_argument('--keep_isoform_ids', action='store_true', default=False,
+                        help='keep origin isoform ids in read names (long reads only)')
     args = parser.parse_args(args, namespace)
 
     if os.path.exists(args.output):

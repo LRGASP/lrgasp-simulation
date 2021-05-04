@@ -143,6 +143,7 @@ Available options are:
 --pb_count  number of PacBio reads to simulate
 --ont_count number of ONT reads to simulate
 --noise_reads add background noise reads (affects only Illumina and ONT)
+--keep_isoform_ids keep origin isoform ids in read names (affects long reads only); by default read names are anonymous
 ```
 
 

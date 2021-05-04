@@ -33,6 +33,8 @@ def main(args):
             read_seq = read[0]
             isoform_id = read[1]
             read_id = "PacBio_simulated_read_" + str(read_counter)
+            if args.keep_isoform_ids:
+                read_id += "_" + isoform_id
             read_counter += 1
             output_fasta.write(">" + read_id + "\n" + read_seq + "\n")
             output_read_info.write(read_id + "\t" + isoform_id + "\n")
@@ -208,7 +210,10 @@ def do_inputs():
     parser.add_argument('-i', '--er_ins', type=float, default=0.0086, help="Error rate: insertion")
     parser.add_argument('-d', '--er_del', type=float, default=0.0027, help="Error rate: deletion")
     parser.add_argument('-p', '--cpu', type=int, default=cpu_count(), help="Number of threads")
-    parser.add_argument('--polya', default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
+    parser.add_argument('--polya', default=False, action='store_true',
+                        help="append polyA tails to transcripts before mutating")
+    parser.add_argument('--keep_isoform_ids', default=False, action='store_true',
+                        help="keep origin isoform ids in read names")
 
     args = parser.parse_args()
     return args

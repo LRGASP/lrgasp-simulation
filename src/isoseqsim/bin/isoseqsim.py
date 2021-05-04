@@ -40,7 +40,8 @@ def main():
         sys.stdout.write("# Step4: simulate Iso-Seq reads\n")
         sys.stdout.flush()
         polya_opt = ' --polya' if args.polya else ''
-        cmd4 = udir + "/py_isoseqsim_simulate_reads_normal.py -g " + args.transcript + " -t " + tempdir + "/normal_transcriptome.fa" + " -5 " + args.c5 + " -3 " + args.c3 + " -o " + args.output + " -s " + args.es + " -i " + args.ei + " -d " + args.ed + " -p " + args.cpu + polya_opt
+        keep_isoforom_ids = ' --keep_isoform_ids' if args.keep_isoform_ids else ''
+        cmd4 = udir + "/py_isoseqsim_simulate_reads_normal.py -g " + args.transcript + " -t " + tempdir + "/normal_transcriptome.fa" + " -5 " + args.c5 + " -3 " + args.c3 + " -o " + args.output + " -s " + args.es + " -i " + args.ei + " -d " + args.ed + " -p " + args.cpu + polya_opt + keep_isoforom_ids
         call(cmd4.split())
 
     elif args.mode == "fusion":  # fusion mode
@@ -182,7 +183,10 @@ def do_inputs():
     group1.add_argument('--ed', type=str, default='0.022', help="Error rate: deletion. For more choices, see README")
     group1.add_argument('--expr', type=str, default=None, help="Expression file")
     parser.add_argument("--read_number", "-n", help="number of reads to generate (in millions)", default=1.0, type=float)
-    group1.add_argument('--polya', default=False, action='store_true', help="Append polyA tails to transcripts before mutating")
+    group1.add_argument('--polya', default=False, action='store_true',
+                        help="append polyA tails to transcripts before mutating")
+    group1.add_argument('--keep_isoform_ids', default=False, action='store_true',
+                        help="keep origin isoform ids in read names")
 
     group2 = parser.add_argument_group('Fusion mode options')
     group2.add_argument('--fc', type=str, default='all',
