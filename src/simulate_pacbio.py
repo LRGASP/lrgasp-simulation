@@ -15,7 +15,7 @@ def simulate_pacbio(args, read_count=1000):
     isoseqsim = os.path.join(src_path, "isoseqsim/bin/isoseqsim.py")
     param_dir = os.path.join(src_path, "isoseqsim/utilities/")
     ref_prefix = args.reference_prefix
-    keep_isoforom_ids = ' --keep_isoform_ids' if args.keep_isoform_ids else ''
+    keep_isoforom_ids = '--keep_isoform_ids' if args.keep_isoform_ids else ''
     result = subprocess.run([isoseqsim, "--cpu", str(args.threads), "--tempdir", args.tmp_dir,
                              "--annotation", ref_prefix + ".annotation.gtf",
                              "--genome", ref_prefix + ".genome.fasta", "--expr", args.counts,
