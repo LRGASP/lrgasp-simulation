@@ -16,7 +16,7 @@ def main():
         left_truncations.append(float(alignment.reference_start) / float(transcript_len))
         right_truncations.append(float(transcript_len - alignment.reference_end) / float(transcript_len))
 
-    bins = [0.0] + [0.005 + 0.01 * i for i in range(0,99)] + [1.0]
+    bins = [0.0] + [0.005 + 0.01 * i for i in range(0,100)] + [1.0]
     print(len(bins), bins)
     res_left = np.histogram(left_truncations, bins=bins, density=True)
     probs_l = []
