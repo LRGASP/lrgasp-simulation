@@ -16,6 +16,8 @@ def main(args):
     sys.stdout.flush()
     error_type, error_prob = extract_error_rate(args.er_sub, args.er_ins, args.er_del)
     bp5_list, pro5_list, bp3_list, pro3_list = extract_read_completeness(args.cpt_5end, args.cpt_3end)
+    print(bp5_list, pro5_list)
+    print(bp3_list, pro3_list)
     input_gpd_fl = args.input_gpd
     output_fasta = open(args.output + ".fasta", "w")
     output_read_info = open(args.output + ".read_to_isoform.tsv", "w")

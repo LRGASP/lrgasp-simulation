@@ -954,6 +954,25 @@ def simulation_aligned_metagenome(min_l, max_l, median_l, sd_l, out_reads, out_e
     out_error.close()
 
 
+def calculate_aligned_length(read_len):
+    bp5_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+                29, 30, 31,  32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+                54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 0]
+    pro5_list = [0.01, 0.0143, 0.0099, 0.0092, 0.008, 0.0092, 0.0065, 0.0082, 0.0075, 0.0074, 0.0065, 0.0064, 0.0077, 0.0094, 0.0068, 0.0084, 0.009, 0.0083, 0.0077, 0.0065, 0.0066, 0.0069, 0.0139, 0.0076, 0.008, 0.0074, 0.0071, 0.0094, 0.0107, 0.0096, 0.0105, 0.0094, 0.0082, 0.0089, 0.0065, 0.0058, 0.0066, 0.0059, 0.0053, 0.0056, 0.0063, 0.0078, 0.0068, 0.0058, 0.0062, 0.0068, 0.0066, 0.0062, 0.0055, 0.0051, 0.0058, 0.0043, 0.0052, 0.0053, 0.0055, 0.0052, 0.0049, 0.0041, 0.005, 0.0044, 0.0043, 0.0054, 0.0049, 0.0041, 0.0046, 0.0042, 0.005, 0.0041, 0.0053, 0.0039, 0.0045, 0.0054, 0.0039, 0.0042, 0.0039, 0.0035, 0.0032, 0.0034, 0.0036, 0.0033, 0.0031, 0.003, 0.0033, 0.0037, 0.0028, 0.0029, 0.0022, 0.0033, 0.0027, 0.0029, 0.0022, 0.0024, 0.0023, 0.0045, 0.0023, 0.0026, 0.0024, 0.0026, 0.0029, 0.0025, 0.41910000000000014]
+    bp3_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+                29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
+                55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+                81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 0]
+    pro3_list = [0.0301, 0.0574, 0.0651, 0.0552, 0.0503, 0.0545, 0.0445, 0.0409, 0.0319, 0.0273, 0.0192, 0.0152, 0.0111, 0.0092, 0.0067, 0.006, 0.0055, 0.0044, 0.0037, 0.0033, 0.003, 0.0034, 0.0033, 0.0028, 0.002, 0.0021, 0.0017, 0.0016, 0.0013, 0.0013, 0.0011, 0.001, 0.001, 0.0005, 0.0009, 0.0009, 0.0008, 0.0005, 0.0004, 0.0005, 0.0005, 0.0005, 0.0005, 0.0005, 0.0006, 0.0005, 0.0004, 0.0006, 0.0005, 0.0004, 0.0005, 0.0003, 0.0005, 0.0003, 0.0003, 0.0002, 0.0003, 0.0006, 0.0004, 0.0006, 0.0005, 0.0002, 0.0003, 0.0003, 0.0005, 0.0005, 0.0006, 0.0003, 0.0005, 0.0006, 0.0007, 0.0011, 0.0008, 0.0008, 0.0004, 0.0003, 0.0006, 0.0005, 0.0004, 0.0005, 0.0004, 0.0004, 0.0003, 0.0002, 0.0005, 0.0004, 0.0005, 0.0005, 0.0005, 0.0004, 0.0003, 0.0004, 0.0004, 0.0003, 0.0004, 0.0003, 0.0002, 0.0003, 0.0003, 0.0003, 0.40170000000000206]
+
+    del5 = np.random.choice(bp5_list, p=pro5_list)
+    del3 = np.random.choice(bp3_list, p=pro3_list)
+    new_len = max(min(50, read_len), read_len - del3 - del5)
+    start_pos = min(del5, read_len - new_len)
+    return new_len, start_pos
+
+
 def simulation_aligned_transcriptome(model_ir, out_reads, out_error, kmer_bias, basecaller, read_type, num_simulate,
                                      polya, fastq, per=False, uracil=False):
     # Simulate aligned reads
@@ -992,19 +1011,21 @@ def simulation_aligned_transcriptome(model_ir, out_reads, out_error, kmer_bias, 
                 if ref_trx in dict_ref_structure:
                     ref_trx_len_fromstructure = ref_len_from_structure(dict_ref_structure[ref_trx])
                     if ref_trx_len == ref_trx_len_fromstructure:
-                        ref_len_aligned = select_nearest_kde2d(sampled_2d_lengths, ref_trx_len)
-                        if ref_len_aligned < ref_trx_len:
-                            break
+                        ref_len_aligned, start_pos = calculate_aligned_length(ref_trx_len)
+                        # if ref_len_aligned < ref_trx_len:
+                        break
             else:
-                ref_len_aligned = select_nearest_kde2d(sampled_2d_lengths, ref_trx_len)
-                if ref_len_aligned < ref_trx_len:
-                    break
+                ref_len_aligned, start_pos = calculate_aligned_length(ref_trx_len)
+                print(ref_trx_len, ref_len_aligned, start_pos)
+                # if ref_len_aligned < ref_trx_len:
+                break
+
         if per:
             with total_simulated.get_lock():
                 sequence_index = total_simulated.value
                 total_simulated.value += 1
 
-            new_read, ref_start_pos, retain_polya = extract_read_trx(ref_trx, ref_len_aligned, trx_has_polya)
+            new_read, ref_start_pos, retain_polya = extract_read_trx(ref_trx, ref_len_aligned, trx_has_polya, ref_pos=start_pos)
             new_read_name = ref_trx + "_" + str(ref_start_pos) + "_perfect_" + str(sequence_index)
             read_mutated = case_convert(new_read)  # not mutated actually, just to be consistent with per == False
 
@@ -1056,10 +1077,10 @@ def simulation_aligned_transcriptome(model_ir, out_reads, out_error, kmer_bias, 
                     if fastq:  # since len(new_read) > middle_ref if IR, add more match quals for retained intron
                         error_count["match"] += len(new_read) - middle_ref
                 else:
-                    new_read, ref_start_pos, retain_polya = extract_read_trx(ref_trx, middle_ref, trx_has_polya)
+                    new_read, ref_start_pos, retain_polya = extract_read_trx(ref_trx, middle_ref, trx_has_polya, ref_pos=start_pos)
 
             else:
-                new_read, ref_start_pos, retain_polya = extract_read_trx(ref_trx, middle_ref, trx_has_polya)
+                new_read, ref_start_pos, retain_polya = extract_read_trx(ref_trx, middle_ref, trx_has_polya, ref_pos=start_pos)
 
             new_read_name = str(ref_trx) + "_" + str(ref_start_pos) + "_aligned_" + str(sequence_index)
             if len(ir_list) > 0:
@@ -1524,10 +1545,11 @@ def reverse_complement(seq):
     return reverse_seq
 
 
-def extract_read_trx(key, length, trx_has_polya, buffer=10):
+def extract_read_trx(key, length, trx_has_polya, ref_pos=-1, buffer=10):
     # buffer: if the extracted read is within 10 base to the reference 3' end, it's considered as reaching to the end
     # TODO change the random into something truer
-    ref_pos = random.randint(0, seq_len[key] - length)
+    if ref_pos == -1:
+        ref_pos = random.randint(0, seq_len[key] - length)
     new_read = seq_dict[key][ref_pos: ref_pos + length]
     retain_polya = False
     if trx_has_polya and ref_pos + length + buffer >= seq_len[key]:  # Read reaches end of transcript
