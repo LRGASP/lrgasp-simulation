@@ -1025,6 +1025,7 @@ def simulation_aligned_transcriptome(model_ir, out_reads, out_error, kmer_bias, 
                 # print(ref_trx_len, ref_len_aligned, start_pos)
                 # if ref_len_aligned < ref_trx_len:
                 break
+        # print(ref_trx_len, ref_len_aligned, start_pos)
 
         if per:
             with total_simulated.get_lock():
@@ -1808,10 +1809,14 @@ def mutate_read(read, read_name, error_log, e_dict, e_count, basecaller, read_ty
         err_quals = []
 
         if val[0] == "mis":
-            ref_base = read[key: key + val[1]]
+            event_len = min(val[1], len(read) - key)
+            ref_base = read[key: key + event_len]
             new_bases = ""
-            for i in xrange(val[1]):
+            # print(len(read), key, val, event_len)
+            for i in xrange(event_len):
                 tmp_bases = list(BASES)
+                # if key + i >= len(read):
+                #    print("ALARM: %d" % i)
                 tmp_bases.remove(read[key + i])
                 # tmp_bases.remove(read[key]) ## Edited this part for testing
                 new_base = random.choice(tmp_bases)
@@ -1819,8 +1824,8 @@ def mutate_read(read, read_name, error_log, e_dict, e_count, basecaller, read_ty
                 if fastq:
                     err_quals.append(mis_quals.pop())
 
-            new_read = read[:key] + new_bases + read[key + val[1]:]
-            err_end = key + val[1]
+            new_read = read[:key] + new_bases + read[key + event_len:]
+            err_end = key + event_len
 
         elif val[0] == "del":
             new_bases = val[1] * "-"
